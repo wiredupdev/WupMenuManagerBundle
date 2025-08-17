@@ -12,12 +12,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "wiredupdev\\MenuManagerBundle\\": "src/"
+      "Wiredupdev\\MenuManagerBundle\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "wiredupdev\\MenuManagerBundle\\Tests\\": "tests/"
+      "Wiredupdev\\MenuManagerBundle\\Tests\\": "tests/"
     }
   },
   "require": {
