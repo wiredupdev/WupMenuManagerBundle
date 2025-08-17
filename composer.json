@@ -1,0 +1,32 @@
+{
+  "name": "wiredupdev/menu-manager-bundle",
+  "description": "Menu manager provides easy way to create and organize menus in your applications.",
+  "minimum-stability": "stable",
+  "type": "symfony-bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Felipe de Almeida Baccaro",
+      "email": "wiredupdev@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "wiredupdev\\MenuManagerBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "wiredupdev\\MenuManagerBundle\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php":">=8.3",
+    "symfony/asset-mapper": "7.3.*"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "v3.86.0",
+    "symfony/framework-bundle": "^6.3|^7.0",
+    "phpunit/phpunit":"^11.0 | ^12.0"
+  }
+}
