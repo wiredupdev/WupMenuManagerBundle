@@ -3,7 +3,6 @@
 namespace Wiredupdev\MenuManagerBundle\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 use Wiredupdev\MenuManagerBundle\MenuItem;
 
@@ -12,7 +11,7 @@ class MenuItemTest extends TestCase
 {
     private MenuItem $menuItem;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->menuItem = new MenuItem(
             'main_menu',
@@ -36,16 +35,15 @@ class MenuItemTest extends TestCase
     {
         $this->menuItem->removeAttribute('rel');
 
-        $this->assertTrue(($this->menuItem->getAttribute('rel') === null));
+        $this->assertTrue(null === $this->menuItem->getAttribute('rel'));
     }
 
     public function testShouldNotRemoveStaticAttributes(): void
     {
         $this->menuItem->removeAttribute('_identifier');
 
-        $this->assertFalse(($this->menuItem->getAttribute('_identifier') === null));
+        $this->assertFalse(null === $this->menuItem->getAttribute('_identifier'));
     }
-
 
     public function testAddChild(): void
     {
@@ -61,12 +59,11 @@ class MenuItemTest extends TestCase
 
         $this->menuItem->addChild($child);
 
-        $this->assertTrue(($this->menuItem->getChild(0) === $child));
+        $this->assertTrue($this->menuItem->getChild(0) === $child);
     }
 
     public function testRemoveChild(): void
     {
-
         $child = new MenuItem(
             'child_1',
             'Child 1',
@@ -83,6 +80,6 @@ class MenuItemTest extends TestCase
 
         $this->menuItem->removeChild($menuChild);
 
-        $this->assertTrue(($this->menuItem->getChild(0) === null));
+        $this->assertTrue(null === $this->menuItem->getChild(0));
     }
 }

@@ -2,26 +2,21 @@
 
 namespace Wiredupdev\MenuManagerBundle;
 
-use Traversable;
-
 class MenuItem implements \IteratorAggregate
 {
-
     private array $children = [];
 
-
     private array $staticAttributes = [
-        '_identifier'
+        '_identifier',
     ];
 
     public function __construct(
         string $identifier,
-        public string     $label,
-        public string     $target,
-        private array     $attributes = [],
-        private ?MenuItem $parent = null,
-    )
-    {
+        public string $label,
+        public string $target,
+        private array $attributes = [],
+        private ?self $parent = null,
+    ) {
         $this->addAttribute('_identifier', $identifier);
     }
 
@@ -37,37 +32,37 @@ class MenuItem implements \IteratorAggregate
 
     public function removeAttribute(string $name): void
     {
-        if(in_array($name, $this->staticAttributes)) {
-           return;
+        if (\in_array($name, $this->staticAttributes)) {
+            return;
         }
 
         unset($this->attributes[$name]);
     }
 
-    public function setParent(?MenuItem $parent): void
+    public function setParent(?self $parent): void
     {
         $this->parent = $parent;
     }
 
-    public function addChild(MenuItem $child): void
+    public function addChild(self $child): void
     {
         $child->setParent($this);
         $this->children[] = $child;
     }
 
-    public function getChild(int $index): ?MenuItem
+    public function getChild(int $index): ?self
     {
         return $this->children[$index] ?? null;
     }
 
-    public function removeChild(MenuItem $child): void
+    public function removeChild(self $child): void
     {
         $key = array_search($child, $this->children);
 
-       unset($this->children[$key]);
+        unset($this->children[$key]);
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->children);
     }
