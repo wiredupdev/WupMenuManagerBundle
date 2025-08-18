@@ -6,18 +6,13 @@ class MenuItem implements \IteratorAggregate
 {
     private array $children = [];
 
-    private array $staticAttributes = [
-        '_identifier',
-    ];
-
     public function __construct(
-        string $identifier,
+        public string|int $identifier,
         public string $label,
         public string $target,
         private array $attributes = [],
         private ?self $parent = null,
     ) {
-        $this->addAttribute('_identifier', $identifier);
     }
 
     public function addAttribute(string $name, string $value): void
@@ -32,7 +27,7 @@ class MenuItem implements \IteratorAggregate
 
     public function removeAttribute(string $name): void
     {
-        if (\in_array($name, $this->staticAttributes)) {
+        if (null === $this->getAttribute($name)) {
             return;
         }
 
@@ -55,6 +50,11 @@ class MenuItem implements \IteratorAggregate
         return $this->children[$index] ?? null;
     }
 
+    public function hasChild(): bool
+    {
+        return (bool) \count($this->children);
+    }
+
     public function removeChild(self $child): void
     {
         $key = array_search($child, $this->children);
@@ -73,6 +73,7 @@ class MenuItem implements \IteratorAggregate
     public function toArray(): array
     {
         return [
+            'identifier' => $this->identifier,
             'label' => $this->label,
             'target' => $this->target,
             'attributes' => $this->attributes,

@@ -38,13 +38,6 @@ class MenuItemTest extends TestCase
         $this->assertTrue(null === $this->menuItem->getAttribute('rel'));
     }
 
-    public function testShouldNotRemoveStaticAttributes(): void
-    {
-        $this->menuItem->removeAttribute('_identifier');
-
-        $this->assertFalse(null === $this->menuItem->getAttribute('_identifier'));
-    }
-
     public function testAddChild(): void
     {
         $child = new MenuItem(
@@ -81,5 +74,40 @@ class MenuItemTest extends TestCase
         $this->menuItem->removeChild($menuChild);
 
         $this->assertTrue(null === $this->menuItem->getChild(0));
+    }
+
+    public function testNestedMenu(): void
+    {
+        $menuCopy = clone $this->menuItem;
+        $menuCopy->identifier = 'sub_menu';
+        $menuCopy->label = 'Submenu';
+        $menuCopy->target = 'https://examplelink3.com/';
+        $this->menuItem->addChild($menuCopy);
+
+        $menuArray = [
+            'identifier' => 'main_menu',
+            'label' => 'Main Menu',
+            'target' => 'https://examplelink.com/',
+            'attributes' => [
+                'target' => '_blank',
+                'rel' => 'nofollow',
+            ],
+            'parent' => null,
+            'children' => [
+                [
+                    'identifier' => 'sub_menu',
+                    'label' => 'Submenu',
+                    'target' => 'https://examplelink3.com/',
+                    'attributes' => [
+                        'target' => '_blank',
+                        'rel' => 'nofollow',
+                    ],
+                    'parent' => $this->menuItem,
+                    'children' => [],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($menuArray, $this->menuItem->toArray());
     }
 }
