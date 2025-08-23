@@ -40,6 +40,11 @@ class MenuItem implements \IteratorAggregate
         $this->parent = $parent;
     }
 
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
     public function addChild(self $child): void
     {
         $child->setParent($this);
