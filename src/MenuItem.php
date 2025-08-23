@@ -6,11 +6,12 @@ class MenuItem implements \IteratorAggregate
 {
     private array $children = [];
 
+    private array $attributes = [];
+
     public function __construct(
-        public string|int $identifier,
-        public string $label,
-        public string $target,
-        private array $attributes = [],
+        private string $identifier,
+        private string $label,
+        private ?string $uri,
         private ?self $parent = null,
     ) {
     }
@@ -42,15 +43,15 @@ class MenuItem implements \IteratorAggregate
     public function addChild(self $child): void
     {
         $child->setParent($this);
-        $this->children[] = $child;
+        $this->children[$child->getIdentifier()] = $child;
     }
 
-    public function getChild(int $index): ?self
+    public function getChild(string $identifier): ?self
     {
-        return $this->children[$index] ?? null;
+        return $this->children[$identifier] ?? null;
     }
 
-    public function hasChild(): bool
+    public function hasChildren(): bool
     {
         return (bool) \count($this->children);
     }
@@ -67,6 +68,36 @@ class MenuItem implements \IteratorAggregate
         return new \ArrayIterator($this->children);
     }
 
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
+    }
+
+    public function setIdentifier(string $identifier): void
+    {
+        $this->identifier = $identifier;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): void
+    {
+        $this->label = $label;
+    }
+
+    public function getUri(): ?string
+    {
+        return $this->uri;
+    }
+
+    public function setUri(string $uri): void
+    {
+        $this->uri = $uri;
+    }
+
     /**
      * @throws \Exception
      */
@@ -75,10 +106,39 @@ class MenuItem implements \IteratorAggregate
         return [
             'identifier' => $this->identifier,
             'label' => $this->label,
-            'target' => $this->target,
+            'uri' => $this->uri,
             'attributes' => $this->attributes,
-            'parent' => $this->parent,
-            'children' => array_map(fn (MenuItem $child) => $child->toArray(), $this->children),
+            'children' => array_values(array_map(fn (MenuItem $child) => $child->toArray(), $this->children)),
         ];
+    }
+
+    public static function fromArray(array $menuItems): self
+    {
+        $requiredOptions = ['identifier', 'label'];
+
+        if (0 === \count(array_diff_key($requiredOptions, $menuItems))) {
+            throw new \InvalidArgumentException(\sprintf('The menu should have at least %s options set', implode(', ', $requiredOptions)));
+        }
+
+        $menu = new self(
+            $menuItems['identifier'],
+            $menuItems['label'],
+            $menuItems['uri'] ?? null,
+            $menuItems['parent'] ?? null
+        );
+
+        if (isset($menuItems['attributes'])) {
+            foreach ($menuItems['attributes'] as $name => $value) {
+                $menu->addAttribute($name, $value);
+            }
+        }
+
+        if (isset($menuItems['children'])) {
+            foreach ($menuItems['children'] as $child) {
+                $menu->addChild(self::fromArray($child));
+            }
+        }
+
+        return $menu;
     }
 }
