@@ -116,7 +116,7 @@ class MenuItem implements \IteratorAggregate
     {
         $requiredOptions = ['identifier', 'label'];
 
-        if (0 === \count(array_diff_key($requiredOptions, $menuItems))) {
+        if (\count($requiredOptions) !== \count(array_intersect(array_keys($menuItems), $requiredOptions))) {
             throw new \InvalidArgumentException(\sprintf('The menu should have at least %s options set', implode(', ', $requiredOptions)));
         }
 

@@ -153,4 +153,15 @@ class MenuItemTest extends TestCase
         $this->assertEquals('_new', $menu->getChild('sub_menu_2')->getAttribute('target'));
         $this->assertEquals('Submenu 1 2', $menu->getChild('sub_menu')->getChild('sub_menu_1_2')->getLabel());
     }
+
+    public function testFromArrayThrowsInvalidArgumentExceptionWhenMissingIdentifier(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        MenuItem::fromArray([
+            'label' => 'Menu',
+            'children' => [],
+            'parent' => null,
+        ]);
+    }
 }
