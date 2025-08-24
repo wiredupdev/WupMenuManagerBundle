@@ -108,13 +108,19 @@ class MenuItem implements \IteratorAggregate
      */
     public function toArray(): array
     {
-        return [
+        $menuItem = [
             'identifier' => $this->identifier,
             'label' => $this->label,
             'uri' => $this->uri,
             'attributes' => $this->attributes,
-            'children' => array_values(array_map(fn (MenuItem $child) => $child->toArray(), $this->children)),
+            'children' => [],
         ];
+
+        foreach ($this->children as $child) {
+            $menuItem['children'][] = $child->toArray();
+        }
+
+        return $menuItem;
     }
 
     public static function fromArray(array $menuItems): self

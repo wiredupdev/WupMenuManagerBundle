@@ -79,28 +79,40 @@ class MenuItemTest extends TestCase
         $menuCopy->setIdentifier('sub_menu');
         $menuCopy->setLabel('Submenu');
         $menuCopy->setUri('https://examplelink3.com/');
+
+        $menuCopyCopy = clone $menuCopy;
+        $menuCopy->addChild($menuCopyCopy);
         $this->menuItem->addChild($menuCopy);
 
         $menuArray = [
             'identifier' => 'main_menu',
             'label' => 'Main Menu',
-            'target' => 'https://examplelink.com/',
+            'uri' => 'https://examplelink.com/',
             'attributes' => [
                 'target' => '_blank',
                 'rel' => 'nofollow',
             ],
-            'parent' => null,
             'children' => [
                 [
                     'identifier' => 'sub_menu',
                     'label' => 'Submenu',
-                    'target' => 'https://examplelink3.com/',
+                    'uri' => 'https://examplelink3.com/',
                     'attributes' => [
                         'target' => '_blank',
                         'rel' => 'nofollow',
                     ],
-                    'parent' => $this->menuItem,
-                    'children' => [],
+                    'children' => [
+                        [
+                            'identifier' => 'sub_menu',
+                            'label' => 'Submenu',
+                            'uri' => 'https://examplelink3.com/',
+                            'attributes' => [
+                                'target' => '_blank',
+                                'rel' => 'nofollow',
+                            ],
+                            'children' => [],
+                        ],
+                    ],
                 ],
             ],
         ];
