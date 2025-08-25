@@ -23,6 +23,12 @@ class MenuItemTest extends TestCase
         $this->menuItem->addAttribute('target', '_blank');
     }
 
+    public function testInvalidIdentifierThrowsInvalidArgumentException(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->menuItem->setIdentifier('Invalid identifier');
+    }
+
     public function testGetAttribute(): void
     {
         $target = $this->menuItem->getAttribute('target');

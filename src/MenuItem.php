@@ -14,6 +14,7 @@ class MenuItem implements \IteratorAggregate
         private ?string $uri,
         private ?self $parent = null,
     ) {
+        $this->validateIdentifier($identifier);
     }
 
     public function addAttribute(string $name, string $value): void
@@ -80,6 +81,7 @@ class MenuItem implements \IteratorAggregate
 
     public function setIdentifier(string $identifier): void
     {
+        $this->validateIdentifier($identifier);
         $this->identifier = $identifier;
     }
 
@@ -151,5 +153,12 @@ class MenuItem implements \IteratorAggregate
         }
 
         return $menu;
+    }
+
+    private function validateIdentifier(string $identifier): void
+    {
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $identifier)) {
+            throw new \InvalidArgumentException(\sprintf('Identifier "%s" is invalid, only letters, numbers, underscore and hyphen are allowed ', $identifier));
+        }
     }
 }
