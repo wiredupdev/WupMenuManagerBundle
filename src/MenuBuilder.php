@@ -32,7 +32,7 @@ class MenuBuilder
 
     public function addChild(self $menu): static
     {
-        $this->menu['children'][] = $menu->getMenu();
+        $this->menu['children'][] = $menu;
 
         return $this;
     }
@@ -40,8 +40,9 @@ class MenuBuilder
     public function getMenu(): MenuItem
     {
         $menu = new MenuItem($this->menu['identifier'], $this->menu['label'], $this->menu['uri']);
+        /** @var MenuBuilder $child */
         foreach ($this->menu['children'] as $child) {
-            $menu->addChild($child);
+            $menu->addChild($child->getMenu());
         }
         foreach ($this->menu['attributes'] as $name => $value) {
             $menu->addAttribute($name, $value);
