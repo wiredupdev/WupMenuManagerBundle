@@ -1,6 +1,6 @@
 <?php
 
-namespace Wiredupdev\MenuManager\Tests;
+namespace Wiredupdev\MenuManagerBundle\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -11,8 +11,9 @@ use Wiredupdev\MenuManagerBundle\MenuItem;
 #[CoversClass(MenuCollection::class)]
 class MenuCollectionTest extends TestCase
 {
-    private MenuCollection  $menuCollection;
-    protected function setUp() : void
+    private MenuCollection $menuCollection;
+
+    protected function setUp(): void
     {
         $this->menuCollection = new MenuCollection();
     }
@@ -25,7 +26,6 @@ class MenuCollectionTest extends TestCase
         $menu->addChild(new MenuItem('contact_us', 'Contact us', 'http://example.com/contact-us'));
         yield [$menu];
     }
-
 
     #[DataProvider('menuDataProvider')]
     public function testAdd(MenuItem $mainMenu): void
@@ -64,5 +64,4 @@ class MenuCollectionTest extends TestCase
         $this->menuCollection->remove('main_menu');
         $this->assertFalse($this->menuCollection->has('main_menu'));
     }
-
 }

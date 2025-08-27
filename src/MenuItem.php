@@ -2,7 +2,7 @@
 
 namespace Wiredupdev\MenuManagerBundle;
 
-class MenuItem implements \IteratorAggregate , \Countable
+class MenuItem implements \IteratorAggregate, \Countable
 {
     private array $children = [];
 
@@ -51,7 +51,7 @@ class MenuItem implements \IteratorAggregate , \Countable
     public function addChild(self $child): void
     {
         $child->setParent($this);
-        $child->setPosition(($this->count() + 1));
+        $child->setPosition($this->count() + 1);
         $this->children[$child->getIdentifier()] = $child;
     }
 
@@ -176,12 +176,12 @@ class MenuItem implements \IteratorAggregate , \Countable
 
     public function count(): int
     {
-       return \count($this->children);
+        return \count($this->children);
     }
 
     public function sort($callback, bool $sortNested = false): void
     {
-         uasort($this->children, $callback);
+        uasort($this->children, $callback);
 
         if ($sortNested) {
             /** @var self $child */
@@ -191,8 +191,8 @@ class MenuItem implements \IteratorAggregate , \Countable
         }
     }
 
-    public function sortByPosition(bool $sortNested = false) : void
+    public function sortByPosition(bool $sortNested = false): void
     {
-        $this->sort(fn(MenuItem $menuA, MenuItem $menuB) => $menuA->getPosition() <=> $menuB->getPosition(), $sortNested);
+        $this->sort(fn (MenuItem $menuA, MenuItem $menuB) => $menuA->getPosition() <=> $menuB->getPosition(), $sortNested);
     }
 }

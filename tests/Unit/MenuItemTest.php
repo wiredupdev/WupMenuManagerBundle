@@ -230,14 +230,14 @@ class MenuItemTest extends TestCase
             ],
         ]);
 
-       $sortingByLabel = fn(MenuItem $menuA, MenuItem $menuB) => $menuA->getLabel() <=> $menuB->getLabel();
-       $menu->sort($sortingByLabel);
+        $sortingByLabel = fn (MenuItem $menuA, MenuItem $menuB) => $menuA->getLabel() <=> $menuB->getLabel();
+        $menu->sort($sortingByLabel);
 
-       $this->assertSame(['sub_menu_a', 'sub_menu_b'], array_keys($menu->getIterator()->getArrayCopy()));
-       $this->assertNotSame(['sub_menu_c', 'sub_menu_d'], array_keys($menu->getChild('sub_menu_b')->getIterator()->getArrayCopy()));
+        $this->assertSame(['sub_menu_a', 'sub_menu_b'], array_keys($menu->getIterator()->getArrayCopy()));
+        $this->assertNotSame(['sub_menu_c', 'sub_menu_d'], array_keys($menu->getChild('sub_menu_b')->getIterator()->getArrayCopy()));
 
-       $menu->sort($sortingByLabel, true);
+        $menu->sort($sortingByLabel, true);
 
-       $this->assertSame(['sub_menu_c', 'sub_menu_d'], array_keys($menu->getChild('sub_menu_b')->getIterator()->getArrayCopy()));
+        $this->assertSame(['sub_menu_c', 'sub_menu_d'], array_keys($menu->getChild('sub_menu_b')->getIterator()->getArrayCopy()));
     }
 }

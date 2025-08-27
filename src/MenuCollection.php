@@ -41,5 +41,4 @@ class MenuCollection implements \IteratorAggregate, \Countable
     {
         return \count($this->menus);
     }
-
 }
