@@ -182,4 +182,62 @@ class MenuItemTest extends TestCase
             'parent' => null,
         ]);
     }
+
+    public function testSort(): void
+    {
+        $menu = MenuItem::fromArray([
+            'identifier' => 'main_menu',
+            'label' => 'Main Menu',
+            'children' => [
+                [
+                    'identifier' => 'sub_menu_b',
+                    'label' => 'B Submenu',
+                    'uri' => 'https://examplelink3.com/',
+                    'attributes' => [
+                        'target' => '_blank',
+                        'rel' => 'nofollow',
+                    ],
+                    'children' => [
+                        [
+                            'identifier' => 'sub_menu_d',
+                            'label' => 'd Submenu',
+                            'uri' => 'https://examplelink3.com/',
+                            'attributes' => [
+                                'target' => '_new',
+                                'rel' => 'nofollow',
+                            ],
+                        ],
+                        [
+                            'identifier' => 'sub_menu_c',
+                            'label' => 'C Submenu',
+                            'uri' => 'https://examplelink3.com/',
+                            'attributes' => [
+                                'target' => '_new',
+                                'rel' => 'nofollow',
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'identifier' => 'sub_menu_a',
+                    'label' => 'A Submenu',
+                    'uri' => 'https://examplelink3.com/',
+                    'attributes' => [
+                        'target' => '_new',
+                        'rel' => 'nofollow',
+                    ],
+                ],
+            ],
+        ]);
+
+       $sortingByLabel = fn(MenuItem $menuA, MenuItem $menuB) => $menuA->getLabel() <=> $menuB->getLabel();
+       $menu->sort($sortingByLabel);
+
+       $this->assertSame(['sub_menu_a', 'sub_menu_b'], array_keys($menu->getIterator()->getArrayCopy()));
+       $this->assertNotSame(['sub_menu_c', 'sub_menu_d'], array_keys($menu->getChild('sub_menu_b')->getIterator()->getArrayCopy()));
+
+       $menu->sort($sortingByLabel, true);
+
+       $this->assertSame(['sub_menu_c', 'sub_menu_d'], array_keys($menu->getChild('sub_menu_b')->getIterator()->getArrayCopy()));
+    }
 }

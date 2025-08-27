@@ -2,11 +2,13 @@
 
 namespace Wiredupdev\MenuManagerBundle;
 
-class MenuItem implements \IteratorAggregate
+class MenuItem implements \IteratorAggregate , \Countable
 {
     private array $children = [];
 
     private array $attributes = [];
+
+    private int $position = 0;
 
     public function __construct(
         private string $identifier,
@@ -49,6 +51,7 @@ class MenuItem implements \IteratorAggregate
     public function addChild(self $child): void
     {
         $child->setParent($this);
+        $child->setPosition(($this->count() + 1));
         $this->children[$child->getIdentifier()] = $child;
     }
 
@@ -59,14 +62,12 @@ class MenuItem implements \IteratorAggregate
 
     public function hasChildren(): bool
     {
-        return (bool) \count($this->children);
+        return (bool) $this->count();
     }
 
-    public function removeChild(self $child): void
+    public function removeChild(string $identifier): void
     {
-        $key = array_search($child, $this->children);
-
-        unset($this->children[$key]);
+        unset($this->children[$identifier]);
     }
 
     public function getIterator(): \Traversable
@@ -118,6 +119,7 @@ class MenuItem implements \IteratorAggregate
             'children' => [],
         ];
 
+        /** @var self $child */
         foreach ($this->children as $child) {
             $menuItem['children'][] = $child->toArray();
         }
@@ -160,5 +162,37 @@ class MenuItem implements \IteratorAggregate
         if (!preg_match('/^[a-zA-Z0-9_-]+$/', $identifier)) {
             throw new \InvalidArgumentException(\sprintf('Identifier "%s" is invalid, only letters, numbers, underscore and hyphen are allowed ', $identifier));
         }
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): void
+    {
+        $this->position = $position;
+    }
+
+    public function count(): int
+    {
+       return \count($this->children);
+    }
+
+    public function sort($callback, bool $sortNested = false): void
+    {
+         uasort($this->children, $callback);
+
+        if ($sortNested) {
+            /** @var self $child */
+            foreach ($this->children as $child) {
+                $child->sort($callback);
+            }
+        }
+    }
+
+    public function sortByPosition(bool $sortNested = false) : void
+    {
+        $this->sort(fn(MenuItem $menuA, MenuItem $menuB) => $menuA->getPosition() <=> $menuB->getPosition(), $sortNested);
     }
 }
