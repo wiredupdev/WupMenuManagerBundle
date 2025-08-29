@@ -13,10 +13,9 @@ class MenuItemTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->menuItem = new MenuItem(
+        $this->menuItem = MenuItem::createItem(
             'main_menu',
-            'Main Menu',
-            'https://examplelink.com/'
+            'Main', 'https://examplelink.com/'
         );
 
         $this->menuItem->addAttribute('rel', 'nofollow');
@@ -45,7 +44,7 @@ class MenuItemTest extends TestCase
 
     public function testAddChild(): void
     {
-        $child = new MenuItem(
+        $child = MenuItem::createItem(
             'child_1',
             'Child 1',
             'https://examplelink2.com/'
@@ -61,7 +60,7 @@ class MenuItemTest extends TestCase
 
     public function testRemoveChild(): void
     {
-        $child = new MenuItem(
+        $child = MenuItem::createItem(
             'child_1',
             'Child 1',
             'https://examplelink2.com/',

@@ -19,9 +19,11 @@ class MenuItem implements \IteratorAggregate, \Countable
         $this->validateIdentifier($identifier);
     }
 
-    public function addAttribute(string $name, string $value): void
+    public function addAttribute(string $name, string $value): self
     {
         $this->attributes[$name] = $value;
+
+        return $this;
     }
 
     public function getAttribute(string $name): ?string
@@ -29,23 +31,30 @@ class MenuItem implements \IteratorAggregate, \Countable
         return $this->attributes[$name] ?? null;
     }
 
-    public function removeAttribute(string $name): void
+    public function removeAttribute(string $name): self
     {
-        if (null === $this->getAttribute($name)) {
-            return;
+        if (null !== $this->getAttribute($name)) {
+            unset($this->attributes[$name]);
         }
 
-        unset($this->attributes[$name]);
+        return $this;
     }
 
-    public function setParent(?self $parent): void
+    public function setParent(?self $parent): self
     {
         $this->parent = $parent;
+
+        return $this;
     }
 
     public function getParent(): ?self
     {
         return $this->parent;
+    }
+
+    public function isRoot(): bool
+    {
+        return null !== $this->parent;
     }
 
     public function addChild(self $child): void
@@ -65,9 +74,11 @@ class MenuItem implements \IteratorAggregate, \Countable
         return (bool) $this->count();
     }
 
-    public function removeChild(string $identifier): void
+    public function removeChild(string $identifier): self
     {
         unset($this->children[$identifier]);
+
+        return $this;
     }
 
     public function getIterator(): \Traversable
@@ -91,9 +102,11 @@ class MenuItem implements \IteratorAggregate, \Countable
         return $this->label;
     }
 
-    public function setLabel(string $label): void
+    public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
     }
 
     public function getUri(): ?string
@@ -101,9 +114,11 @@ class MenuItem implements \IteratorAggregate, \Countable
         return $this->uri;
     }
 
-    public function setUri(string $uri): void
+    public function setUri(string $uri): self
     {
         $this->uri = $uri;
+
+        return $this;
     }
 
     /**
@@ -169,9 +184,11 @@ class MenuItem implements \IteratorAggregate, \Countable
         return $this->position;
     }
 
-    public function setPosition(int $position): void
+    public function setPosition(int $position): self
     {
         $this->position = $position;
+
+        return $this;
     }
 
     public function count(): int
@@ -179,7 +196,7 @@ class MenuItem implements \IteratorAggregate, \Countable
         return \count($this->children);
     }
 
-    public function sort($callback, bool $sortNested = false): void
+    public function sort($callback, bool $sortNested = false): self
     {
         uasort($this->children, $callback);
 
@@ -189,10 +206,19 @@ class MenuItem implements \IteratorAggregate, \Countable
                 $child->sort($callback);
             }
         }
+
+        return $this;
     }
 
-    public function sortByPosition(bool $sortNested = false): void
+    public function sortByPosition(bool $sortNested = false): self
     {
         $this->sort(fn (MenuItem $menuA, MenuItem $menuB) => $menuA->getPosition() <=> $menuB->getPosition(), $sortNested);
+
+        return $this;
+    }
+
+    public function createItem(string $identifier, string $label, ?string $uri = null): static
+    {
+        return new self($identifier, $label, $uri);
     }
 }
