@@ -57,11 +57,13 @@ class MenuItem implements \IteratorAggregate, \Countable
         return null !== $this->parent;
     }
 
-    public function addChild(self $child): void
+    public function addChild(self $child): self
     {
         $child->setParent($this);
         $child->setPosition($this->count() + 1);
         $this->children[$child->getIdentifier()] = $child;
+
+        return $this;
     }
 
     public function getChild(string $identifier): ?self
@@ -217,7 +219,7 @@ class MenuItem implements \IteratorAggregate, \Countable
         return $this;
     }
 
-    public function createItem(string $identifier, string $label, ?string $uri = null): static
+    public static function createItem(string $identifier, string $label, ?string $uri = null): static
     {
         return new self($identifier, $label, $uri);
     }
