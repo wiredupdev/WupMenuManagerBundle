@@ -1,0 +1,4 @@
+wup_menu_manager:
+  menus:
+    - {type: 'class' , reference: '\Wiredupdev\MenuManagerBundle\Tests\Resource\MenuTest'}
+    - {type: 'class' , reference: '\Wiredupdev\MenuManagerBundle\Tests\Resource\MenuTest'}

@@ -5,7 +5,7 @@ namespace Wiredupdev\MenuManagerBundle\Tests\Util;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Wiredupdev\MenuManagerBundle\MenuManagerBundle;
+use Wiredupdev\MenuManagerBundle\WupMenuManagerBundle;
 
 class Kernel extends \Symfony\Component\HttpKernel\Kernel
 {
@@ -17,7 +17,7 @@ class Kernel extends \Symfony\Component\HttpKernel\Kernel
     {
         return [
             new FrameworkBundle(),
-            new MenuManagerBundle(),
+            new WupMenuManagerBundle(),
         ];
     }
 
@@ -31,6 +31,10 @@ class Kernel extends \Symfony\Component\HttpKernel\Kernel
                 'test' => true,
             ]);
         });
+
+        $loader->load(__DIR__ . '/../Resource/Config/wup_menu_manager.yaml');
+        $loader->load(__DIR__ . '/../Resource/Config/wup_menu_manager.xml');
+
     }
 
     public function getProjectDir(): string

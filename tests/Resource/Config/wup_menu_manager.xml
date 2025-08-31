@@ -1,0 +1,17 @@
+
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:menu-manager="http://wiredupdev.com/schema/dic/menu-manager"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd
+        http://wiredupdev.com/schema/dic/menu-manager
+        https://wiredupdev.com/schema/dic/menu-manager/menu-manager-1.0.xsd"
+>
+
+   <menu-manager:menu type="class" reference="Wiredupdev\MenuManagerBundle\Tests\Resource\MainMenuTest" />
+   <menu-manager:menu type="class" reference="Wiredupdev\MenuManagerBundle\Tests\Resource\SidebarMenuTest" />
+
+
+
+</container>
