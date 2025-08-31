@@ -1,6 +1,6 @@
 <?php
 
-namespace Wiredupdev\MenuManagerBundle\Tests;
+namespace Wiredupdev\MenuManagerBundle\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +13,7 @@ class MenuItemTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->menuItem = MenuItem::createItem(
+        $this->menuItem = MenuItem::create(
             'main_menu',
             'Main', 'https://examplelink.com/'
         );
@@ -44,7 +44,7 @@ class MenuItemTest extends TestCase
 
     public function testAddChild(): void
     {
-        $child = MenuItem::createItem(
+        $child = MenuItem::create(
             'child_1',
             'Child 1',
             'https://examplelink2.com/'
@@ -60,7 +60,7 @@ class MenuItemTest extends TestCase
 
     public function testRemoveChild(): void
     {
-        $child = MenuItem::createItem(
+        $child = MenuItem::create(
             'child_1',
             'Child 1',
             'https://examplelink2.com/',

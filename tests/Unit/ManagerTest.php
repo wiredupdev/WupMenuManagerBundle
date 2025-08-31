@@ -1,6 +1,6 @@
 <?php
 
-namespace Wiredupdev\MenuManagerBundle\Tests;
+namespace Wiredupdev\MenuManagerBundle\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -19,12 +19,12 @@ class ManagerTest extends TestCase
 
     public function testAddMenu(): void
     {
-        $menuBuilder = MenuItem::createItem('home_menu', '')
+        $menuBuilder = MenuItem::create('home_menu', '')
             ->addAttribute('id', 'id')
             ->addAttribute('class', 'class')
             ->addAttribute('role', 'role_anonymous_user')
             ->addChild(
-                MenuItem::createItem('about_us', 'About us', 'https://example.com/about')
+                MenuItem::create('about_us', 'About us', 'https://example.com/about')
                     ->addAttribute('id', 'about-us')
                     ->addAttribute('role', 'role_anonymous_user')
             );
@@ -36,12 +36,12 @@ class ManagerTest extends TestCase
 
     public function testRemoveMenu(): void
     {
-        $menuBuilder = MenuItem::createItem('home_menu', '')
+        $menuBuilder = MenuItem::create('home_menu', '')
             ->addAttribute('id', 'id')
             ->addAttribute('class', 'class')
             ->addAttribute('role', 'role_anonymous_user')
             ->addChild(
-                MenuItem::createItem('about_us', 'About us', 'https://example.com/about')
+                MenuItem::create('about_us', 'About us', 'https://example.com/about')
                     ->addAttribute('id', 'about-us')
                     ->addAttribute('role', 'role_anonymous_user')
             );
