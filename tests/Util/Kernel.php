@@ -1,0 +1,42 @@
+<?php
+
+namespace Wiredupdev\MenuManagerBundle\Tests\Util;
+
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Wiredupdev\MenuManagerBundle\MenuManagerBundle;
+
+class Kernel extends \Symfony\Component\HttpKernel\Kernel
+{
+
+    /**
+     * @inheritDoc
+     */
+    public function registerBundles(): iterable
+    {
+        return [
+            new FrameworkBundle(),
+            new MenuManagerBundle(),
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader)
+    {
+        $loader->load(function (ContainerBuilder $container) {
+            $container->loadFromExtension('framework', [
+                'test' => true,
+            ]);
+        });
+    }
+
+    public function getProjectDir(): string
+    {
+        return __DIR__.'/../../' ;
+    }
+
+
+}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          cacheDirectory=".phpunit.cache"
          executionOrder="depends,defects"
          requireCoverageMetadata="true"
@@ -11,9 +11,12 @@
          failOnPhpunitDeprecation="true"
          failOnRisky="true"
          failOnWarning="true">
+    <php>
+        <server name="KERNEL_CLASS" value="Wiredupdev\MenuManagerBundle\Tests\Util\Kernel" />
+    </php>
     <testsuites>
-        <testsuite name="Unity test">
-            <directory>tests/Unit</directory>
+        <testsuite name="tests">
+            <directory>tests/</directory>
         </testsuite>
     </testsuites>
 
