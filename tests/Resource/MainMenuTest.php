@@ -2,12 +2,12 @@
 
 namespace Wiredupdev\MenuManagerBundle\Tests\Resource;
 
-use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
 use Wiredupdev\MenuManagerBundle\MenuManager;
+use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
 
-class MainMenuTest {
-
-    public function __invoke(MenuManager $menuManager) :void
+class MainMenuTest
+{
+    public function __invoke(MenuManager $menuManager): void
     {
         $menuManager->add(
             MenuItem::create('main_menu_site', 'main menu site')

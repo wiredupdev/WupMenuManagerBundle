@@ -9,10 +9,6 @@ use Wiredupdev\MenuManagerBundle\WupMenuManagerBundle;
 
 class Kernel extends \Symfony\Component\HttpKernel\Kernel
 {
-
-    /**
-     * @inheritDoc
-     */
     public function registerBundles(): iterable
     {
         return [
@@ -21,9 +17,6 @@ class Kernel extends \Symfony\Component\HttpKernel\Kernel
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(function (ContainerBuilder $container) {
@@ -32,15 +25,12 @@ class Kernel extends \Symfony\Component\HttpKernel\Kernel
             ]);
         });
 
-        $loader->load(__DIR__ . '/../Resource/Config/wup_menu_manager.yaml');
-        $loader->load(__DIR__ . '/../Resource/Config/wup_menu_manager.xml');
-
+        $loader->load(__DIR__.'/../Resource/Config/wup_menu_manager.yaml');
+        $loader->load(__DIR__.'/../Resource/Config/wup_menu_manager.xml');
     }
 
     public function getProjectDir(): string
     {
-        return __DIR__.'/../../' ;
+        return __DIR__.'/../../';
     }
-
-
 }

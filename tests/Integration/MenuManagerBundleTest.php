@@ -10,7 +10,8 @@ use Wiredupdev\MenuManagerBundle\WupMenuManagerBundle;
 #[CoversClass(WupMenuManagerBundle::class)]
 class MenuManagerBundleTest extends KernelTestCase
 {
-    public function testMenuManager() {
+    public function testMenuManager()
+    {
         static::bootKernel([
             'debug' => false,
         ]);
@@ -19,6 +20,5 @@ class MenuManagerBundleTest extends KernelTestCase
 
         $menuManager = $container->get(MenuManager::class);
         $this->assertInstanceOf(MenuManager::class, $menuManager);
-
     }
 }

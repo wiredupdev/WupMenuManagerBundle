@@ -11,10 +11,8 @@ class WupMenuManagerBundle extends AbstractBundle
 {
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
-       $container->import(__DIR__ . '/../config/services.xml');
-
+        $container->import(__DIR__.'/../config/services.xml');
     }
-
 
     public function configure(DefinitionConfigurator $definition): void
     {
@@ -36,7 +34,4 @@ class WupMenuManagerBundle extends AbstractBundle
               ->end()
             ->end();
     }
-
-
-
 }

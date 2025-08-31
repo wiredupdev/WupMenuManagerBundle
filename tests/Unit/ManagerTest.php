@@ -4,8 +4,8 @@ namespace Wiredupdev\MenuManagerBundle\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
 use Wiredupdev\MenuManagerBundle\MenuManager;
+use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
 
 #[CoversClass(MenuItem::class)]
 class ManagerTest extends TestCase
