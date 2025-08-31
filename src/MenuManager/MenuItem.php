@@ -1,6 +1,6 @@
 <?php
 
-namespace Wiredupdev\MenuManagerBundle;
+namespace Wiredupdev\MenuManagerBundle\MenuManager;
 
 class MenuItem implements \IteratorAggregate, \Countable
 {
@@ -219,7 +219,7 @@ class MenuItem implements \IteratorAggregate, \Countable
         return $this;
     }
 
-    public static function createItem(string $identifier, string $label, ?string $uri = null): static
+    public static function create(string $identifier, string $label, ?string $uri = null): static
     {
         return new self($identifier, $label, $uri);
     }

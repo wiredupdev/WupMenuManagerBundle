@@ -1,10 +1,10 @@
 <?php
 
-namespace Wiredupdev\MenuManagerBundle\Tests\Unit;
+namespace MenuManager;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Wiredupdev\MenuManagerBundle\MenuItem;
+use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
 
 #[CoversClass(MenuItem::class)]
 class MenuItemTest extends TestCase

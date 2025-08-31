@@ -4,7 +4,7 @@ namespace Wiredupdev\MenuManagerBundle\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Wiredupdev\MenuManagerBundle\MenuItem;
+use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
 use Wiredupdev\MenuManagerBundle\MenuManager;
 
 #[CoversClass(MenuItem::class)]

@@ -2,6 +2,8 @@
 
 namespace Wiredupdev\MenuManagerBundle;
 
+use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
+
 class MenuManager
 {
     private array $menus = [];
