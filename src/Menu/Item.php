@@ -1,8 +1,8 @@
 <?php
 
-namespace Wiredupdev\MenuManagerBundle\MenuManager;
+namespace Wiredupdev\MenuManagerBundle\Menu;
 
-class MenuItem implements \IteratorAggregate, \Countable
+class Item implements \IteratorAggregate, \Countable
 {
     private array $children = [];
 
@@ -10,34 +10,67 @@ class MenuItem implements \IteratorAggregate, \Countable
 
     private int $position = 0;
 
+    private bool $visibility = true;
+
+    private bool $activePage = false;
+
     public function __construct(
-        private string $identifier,
+        private string $id,
         private string $label,
-        private ?string $uri,
+        private string|UriResolver|null $uri = null,
         private ?self $parent = null,
     ) {
-        $this->validateIdentifier($identifier);
+        $this->validateIdentifier($id);
     }
 
-    public function addAttribute(string $name, string $value): self
+    public function setActivePage(bool $activePage): self
+    {
+        $this->activePage = $activePage;
+
+        return $this;
+    }
+
+    public function show(): self
+    {
+        $this->visibility = true;
+
+        return $this;
+    }
+
+    public function hide(): self
+    {
+        $this->visibility = false;
+
+        return $this;
+    }
+
+    public function isVisible(): bool
+    {
+        return $this->visibility;
+    }
+
+    public function addAttribute(string $name, mixed $value): self
     {
         $this->attributes[$name] = $value;
 
         return $this;
     }
 
-    public function getAttribute(string $name): ?string
+    public function hasAttribute(string $name): bool
     {
-        return $this->attributes[$name] ?? null;
+        return isset($this->attributes[$name]);
     }
 
     public function removeAttribute(string $name): self
     {
-        if (null !== $this->getAttribute($name)) {
-            unset($this->attributes[$name]);
-        }
+        unset($this->attributes[$name]);
 
         return $this;
+    }
+
+    public function getAttribute(string $name): mixed
+    {
+        return $this->attributes[$name] ?? null;
     }
 
     public function setParent(?self $parent): self
@@ -61,7 +94,7 @@ class MenuItem implements \IteratorAggregate, \Countable
     {
         $child->setParent($this);
         $child->setPosition($this->count() + 1);
-        $this->children[$child->getIdentifier()] = $child;
+        $this->children[$child->getId()] = $child;
 
         return $this;
     }
@@ -88,15 +121,15 @@ class MenuItem implements \IteratorAggregate, \Countable
         return new \ArrayIterator($this->children);
     }
 
-    public function getIdentifier(): string
+    public function getId(): string
     {
-        return $this->identifier;
+        return $this->id;
     }
 
-    public function setIdentifier(string $identifier): void
+    public function setId(string $id): void
     {
-        $this->validateIdentifier($identifier);
-        $this->identifier = $identifier;
+        $this->validateIdentifier($id);
+        $this->id = $id;
     }
 
     public function getLabel(): string
@@ -113,10 +146,14 @@ class MenuItem implements \IteratorAggregate, \Countable
 
     public function getUri(): ?string
     {
+        if ($this->uri instanceof UriResolver) {
+            return $this->uri->getResolvedUri();
+        }
+
         return $this->uri;
     }
 
-    public function setUri(string $uri): self
+    public function setUri(string|UriResolver|null $uri): self
     {
         $this->uri = $uri;
 
@@ -129,10 +166,12 @@ class MenuItem implements \IteratorAggregate, \Countable
     public function toArray(): array
     {
         $menuItem = [
-            'identifier' => $this->identifier,
+            'id' => $this->id,
             'label' => $this->label,
             'uri' => $this->uri,
             'attributes' => $this->attributes,
+            'active_page' => $this->activePage,
+            'enabled' => $this->visibility,
             'children' => [],
         ];
 
@@ -146,17 +185,16 @@ class MenuItem implements \IteratorAggregate, \Countable
 
     public static function fromArray(array $menuItems): self
     {
-        $requiredOptions = ['identifier', 'label'];
+        $requiredOptions = ['id', 'label'];
 
         if (\count($requiredOptions) !== \count(array_intersect(array_keys($menuItems), $requiredOptions))) {
             throw new \InvalidArgumentException(\sprintf('The menu should have at least %s options set', implode(', ', $requiredOptions)));
         }
 
         $menu = new self(
-            $menuItems['identifier'],
+            $menuItems['id'],
             $menuItems['label'],
-            $menuItems['uri'] ?? null,
-            $menuItems['parent'] ?? null
+            $menuItems['uri'] ?? null
         );
 
         if (isset($menuItems['attributes'])) {
@@ -169,6 +207,14 @@ class MenuItem implements \IteratorAggregate, \Countable
             foreach ($menuItems['children'] as $child) {
                 $menu->addChild(self::fromArray($child));
             }
+        }
+
+        if (isset($menuItems['enabled']) && (false === $menuItems['enabled'])) {
+            $menu->disable();
+        }
+
+        if (isset($menuItems['active_page']) && (false === $menuItems['active_page'])) {
+            $menu->setActivePage(false);
         }
 
         return $menu;
@@ -214,7 +260,7 @@ class MenuItem implements \IteratorAggregate, \Countable
 
     public function sortByPosition(bool $sortNested = false): self
     {
-        $this->sort(fn (MenuItem $menuA, MenuItem $menuB) => $menuA->getPosition() <=> $menuB->getPosition(), $sortNested);
+        $this->sort(fn (Item $menuA, Item $menuB) => $menuA->getPosition() <=> $menuB->getPosition(), $sortNested);
 
         return $this;
     }

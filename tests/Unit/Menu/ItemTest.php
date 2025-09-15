@@ -1,31 +1,30 @@
 <?php
 
-namespace MenuManager;
+namespace Menu;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
+use Wiredupdev\MenuManagerBundle\Menu\Item;
 
-#[CoversClass(MenuItem::class)]
-class MenuItemTest extends TestCase
+#[CoversClass(Item::class)]
+class ItemTest extends TestCase
 {
-    private MenuItem $menuItem;
+    private Item $menuItem;
 
     protected function setUp(): void
     {
-        $this->menuItem = MenuItem::create(
+        $this->menuItem = Item::create(
             'main_menu',
-            'Main', 'https://examplelink.com/'
-        );
-
-        $this->menuItem->addAttribute('rel', 'nofollow');
-        $this->menuItem->addAttribute('target', '_blank');
+            'Main Menu', 'https://examplelink.com/'
+        )
+            ->addAttribute('rel', 'nofollow')
+            ->addAttribute('target', '_blank');
     }
 
-    public function testInvalidIdentifierThrowsInvalidArgumentException(): void
+    public function testThrowsInvalidArgumentException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->menuItem->setIdentifier('Invalid identifier');
+        $this->menuItem->setId('Invalid id');
     }
 
     public function testGetAttribute(): void
@@ -44,7 +43,7 @@ class MenuItemTest extends TestCase
 
     public function testAddChild(): void
     {
-        $child = MenuItem::create(
+        $child = Item::create(
             'child_1',
             'Child 1',
             'https://examplelink2.com/'
@@ -60,28 +59,26 @@ class MenuItemTest extends TestCase
 
     public function testRemoveChild(): void
     {
-        $child = MenuItem::create(
+        $child = Item::create(
             'child_1',
             'Child 1',
             'https://examplelink2.com/',
         );
 
-        $child->addAttribute('rel', 'nofollow');
-        $child->addAttribute('target', '_blank');
-
         $this->menuItem->addChild($child);
 
-        $menuChild = $this->menuItem->getChild('child_1');
-
-        $this->menuItem->removeChild($menuChild);
+        $this->menuItem->removeChild('child_1');
 
         $this->assertTrue(null === $this->menuItem->getChild('child_1'));
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testNestedMenu(): void
     {
         $menuCopy = clone $this->menuItem;
-        $menuCopy->setIdentifier('sub_menu');
+        $menuCopy->setId('sub_menu');
         $menuCopy->setLabel('Submenu');
         $menuCopy->setUri('https://examplelink3.com/');
 
@@ -90,7 +87,7 @@ class MenuItemTest extends TestCase
         $this->menuItem->addChild($menuCopy);
 
         $menuArray = [
-            'identifier' => 'main_menu',
+            'id' => 'main_menu',
             'label' => 'Main Menu',
             'uri' => 'https://examplelink.com/',
             'attributes' => [
@@ -99,7 +96,7 @@ class MenuItemTest extends TestCase
             ],
             'children' => [
                 [
-                    'identifier' => 'sub_menu',
+                    'id' => 'sub_menu',
                     'label' => 'Submenu',
                     'uri' => 'https://examplelink3.com/',
                     'attributes' => [
@@ -108,7 +105,7 @@ class MenuItemTest extends TestCase
                     ],
                     'children' => [
                         [
-                            'identifier' => 'sub_menu',
+                            'id' => 'sub_menu',
                             'label' => 'Submenu',
                             'uri' => 'https://examplelink3.com/',
                             'attributes' => [
@@ -116,10 +113,16 @@ class MenuItemTest extends TestCase
                                 'rel' => 'nofollow',
                             ],
                             'children' => [],
+                            'active_page' => false,
+                            'enabled' => true
                         ],
                     ],
+                    'active_page' => false,
+                    'enabled' => true
                 ],
             ],
+            'active_page' => false,
+            'enabled' => true
         ];
 
         $this->assertEquals($menuArray, $this->menuItem->toArray());
@@ -127,12 +130,12 @@ class MenuItemTest extends TestCase
 
     public function testFromArray()
     {
-        $menu = MenuItem::fromArray([
-            'identifier' => 'main_menu',
+        $menu = Item::fromArray([
+            'id' => 'main_menu',
             'label' => 'Main Menu',
             'children' => [
                 [
-                    'identifier' => 'sub_menu',
+                    'id' => 'sub_menu',
                     'label' => 'Submenu',
                     'uri' => 'https://examplelink3.com/',
                     'attributes' => [
@@ -141,29 +144,35 @@ class MenuItemTest extends TestCase
                     ],
                     'children' => [
                         [
-                            'identifier' => 'sub_menu_1_2',
+                            'id' => 'sub_menu_1_2',
                             'label' => 'Submenu 1 2',
                             'uri' => 'https://examplelink3.com/',
                             'attributes' => [
-                                'target' => '_new',
+                                'target' => '_blank',
                                 'rel' => 'nofollow',
                             ],
                         ],
                     ],
+                    'active_page' => false,
+                    'enabled' => true
                 ],
                 [
-                    'identifier' => 'sub_menu_2',
+                    'id' => 'sub_menu_2',
                     'label' => 'Submenu 2',
                     'uri' => 'https://examplelink3.com/',
                     'attributes' => [
                         'target' => '_new',
                         'rel' => 'nofollow',
                     ],
+                    'active_page' => false,
+                    'enabled' => true
                 ],
             ],
+            'active_page' => false,
+            'enabled' => true
         ]);
 
-        $this->assertEquals('main_menu', $menu->getIdentifier());
+        $this->assertEquals('main_menu', $menu->getId());
         $this->assertEquals('Main Menu', $menu->getLabel());
         $this->assertEquals('Submenu', $menu->getChild('sub_menu')->getLabel());
         $this->assertEquals('Submenu 2', $menu->getChild('sub_menu_2')->getLabel());
@@ -171,11 +180,11 @@ class MenuItemTest extends TestCase
         $this->assertEquals('Submenu 1 2', $menu->getChild('sub_menu')->getChild('sub_menu_1_2')->getLabel());
     }
 
-    public function testFromArrayThrowsInvalidArgumentExceptionWhenMissingIdentifier(): void
+    public function testFromArrayThrowsInvalidArgumentExceptionWhenMissingId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        MenuItem::fromArray([
+        Item::fromArray([
             'label' => 'Menu',
             'children' => [],
             'parent' => null,
@@ -184,12 +193,12 @@ class MenuItemTest extends TestCase
 
     public function testSort(): void
     {
-        $menu = MenuItem::fromArray([
-            'identifier' => 'main_menu',
+        $menu = Item::fromArray([
+            'id' => 'main_menu',
             'label' => 'Main Menu',
             'children' => [
                 [
-                    'identifier' => 'sub_menu_b',
+                    'id' => 'sub_menu_b',
                     'label' => 'B Submenu',
                     'uri' => 'https://examplelink3.com/',
                     'attributes' => [
@@ -198,38 +207,46 @@ class MenuItemTest extends TestCase
                     ],
                     'children' => [
                         [
-                            'identifier' => 'sub_menu_d',
+                            'id' => 'sub_menu_d',
                             'label' => 'd Submenu',
                             'uri' => 'https://examplelink3.com/',
                             'attributes' => [
-                                'target' => '_new',
+                                'target' => '_blank',
                                 'rel' => 'nofollow',
                             ],
+                            'active_page' => false,
+                            'enabled' => true
                         ],
                         [
-                            'identifier' => 'sub_menu_c',
+                            'id' => 'sub_menu_c',
                             'label' => 'C Submenu',
                             'uri' => 'https://examplelink3.com/',
                             'attributes' => [
-                                'target' => '_new',
+                                'target' => '_blank',
                                 'rel' => 'nofollow',
                             ],
+                            'active_page' => false,
+                            'enabled' => true
                         ],
                     ],
                 ],
                 [
-                    'identifier' => 'sub_menu_a',
+                    'id' => 'sub_menu_a',
                     'label' => 'A Submenu',
                     'uri' => 'https://examplelink3.com/',
                     'attributes' => [
-                        'target' => '_new',
+                        'target' => '_blank',
                         'rel' => 'nofollow',
                     ],
+                    'active_page' => false,
+                    'enabled' => true
                 ],
             ],
+            'active_page' => false,
+            'enabled' => true
         ]);
 
-        $sortingByLabel = fn (MenuItem $menuA, MenuItem $menuB) => $menuA->getLabel() <=> $menuB->getLabel();
+        $sortingByLabel = fn (Item $menuA, Item $menuB) => $menuA->getLabel() <=> $menuB->getLabel();
         $menu->sort($sortingByLabel);
 
         $this->assertSame(['sub_menu_a', 'sub_menu_b'], array_keys($menu->getIterator()->getArrayCopy()));
