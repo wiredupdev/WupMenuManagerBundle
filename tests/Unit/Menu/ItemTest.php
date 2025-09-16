@@ -114,15 +114,15 @@ class ItemTest extends TestCase
                             ],
                             'children' => [],
                             'active_page' => false,
-                            'enabled' => true
+                            'enabled' => true,
                         ],
                     ],
                     'active_page' => false,
-                    'enabled' => true
+                    'enabled' => true,
                 ],
             ],
             'active_page' => false,
-            'enabled' => true
+            'enabled' => true,
         ];
 
         $this->assertEquals($menuArray, $this->menuItem->toArray());
@@ -154,7 +154,7 @@ class ItemTest extends TestCase
                         ],
                     ],
                     'active_page' => false,
-                    'enabled' => true
+                    'enabled' => true,
                 ],
                 [
                     'id' => 'sub_menu_2',
@@ -165,11 +165,11 @@ class ItemTest extends TestCase
                         'rel' => 'nofollow',
                     ],
                     'active_page' => false,
-                    'enabled' => true
+                    'enabled' => true,
                 ],
             ],
             'active_page' => false,
-            'enabled' => true
+            'enabled' => true,
         ]);
 
         $this->assertEquals('main_menu', $menu->getId());
@@ -215,7 +215,7 @@ class ItemTest extends TestCase
                                 'rel' => 'nofollow',
                             ],
                             'active_page' => false,
-                            'enabled' => true
+                            'enabled' => true,
                         ],
                         [
                             'id' => 'sub_menu_c',
@@ -226,7 +226,7 @@ class ItemTest extends TestCase
                                 'rel' => 'nofollow',
                             ],
                             'active_page' => false,
-                            'enabled' => true
+                            'enabled' => true,
                         ],
                     ],
                 ],
@@ -239,11 +239,11 @@ class ItemTest extends TestCase
                         'rel' => 'nofollow',
                     ],
                     'active_page' => false,
-                    'enabled' => true
+                    'enabled' => true,
                 ],
             ],
             'active_page' => false,
-            'enabled' => true
+            'enabled' => true,
         ]);
 
         $sortingByLabel = fn (Item $menuA, Item $menuB) => $menuA->getLabel() <=> $menuB->getLabel();
