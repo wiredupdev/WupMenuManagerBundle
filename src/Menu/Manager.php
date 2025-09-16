@@ -1,14 +1,12 @@
 <?php
 
-namespace Wiredupdev\MenuManagerBundle;
+namespace Wiredupdev\MenuManagerBundle\Menu;
 
-use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
-
-class MenuManager
+class Manager
 {
     private array $menus = [];
 
-    public function get(string $identifier): MenuItem
+    public function get(string $identifier): Item
     {
         if (($menu = $this->menus[$identifier]) === null) {
             throw new \InvalidArgumentException(\sprintf("Menu with identifier '%s' not found.", $identifier));
@@ -17,13 +15,13 @@ class MenuManager
         return $menu;
     }
 
-    public function add(MenuItem $menu): void
+    public function add(Item $menu): void
     {
-        if (isset($this->menus[$menu->getIdentifier()])) {
-            throw new \InvalidArgumentException(\sprintf("Menu with identifier '%s' already exists.", $menu->getIdentifier()));
+        if (isset($this->menus[$menu->getId()])) {
+            throw new \InvalidArgumentException(\sprintf("Menu with identifier '%s' already exists.", $menu->getId()));
         }
 
-        $this->menus[$menu->getIdentifier()] = $menu;
+        $this->menus[$menu->getId()] = $menu;
     }
 
     public function remove(string $identifier): void

@@ -1,30 +1,45 @@
 <?php
 
-namespace Wiredupdev\MenuManagerBundle\Tests\Unit;
+namespace Menu;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Wiredupdev\MenuManagerBundle\MenuManager;
-use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
+use Wiredupdev\MenuManagerBundle\Menu\Item;
+use Wiredupdev\MenuManagerBundle\Menu\Manager;
 
-#[CoversClass(MenuItem::class)]
+#[CoversClass(Item::class)]
 class ManagerTest extends TestCase
 {
-    private MenuManager $menuManager;
+    private Manager $menuManager;
 
     protected function setUp(): void
     {
-        $this->menuManager = new MenuManager();
+        $this->menuManager = new Manager();
+        $this->menuManager->add(
+            Item::create('admin_side_bar', '')
+            ->addChild(Item::create('profile', 'Profile', 'https://example.com/profile'))
+            ->addChild(Item::create('products', 'Products', 'https://example.com/products'))
+        );
+    }
+
+    public function testModifyExistingMenuItem(): void
+    {
+        $this->menuManager->get('admin_side_bar')->getChild('products')->setPosition(1);
+        $this->menuManager->get('admin_side_bar')->getChild('profile')->setPosition(2);
+
+        $menu = $this->menuManager->get('admin_side_bar')->sortByPosition(true);
+
+        $this->assertSame(['products', 'profile'], array_keys($menu->getIterator()->getArrayCopy()));
     }
 
     public function testAddMenu(): void
     {
-        $menuBuilder = MenuItem::create('home_menu', '')
+        $menuBuilder = Item::create('home_menu', '')
             ->addAttribute('id', 'id')
             ->addAttribute('class', 'class')
             ->addAttribute('role', 'role_anonymous_user')
             ->addChild(
-                MenuItem::create('about_us', 'About us', 'https://example.com/about')
+                Item::create('about_us', 'About us', 'https://example.com/about')
                     ->addAttribute('id', 'about-us')
                     ->addAttribute('role', 'role_anonymous_user')
             );
@@ -36,12 +51,12 @@ class ManagerTest extends TestCase
 
     public function testRemoveMenu(): void
     {
-        $menuBuilder = MenuItem::create('home_menu', '')
+        $menuBuilder = Item::create('home_menu', '')
             ->addAttribute('id', 'id')
             ->addAttribute('class', 'class')
             ->addAttribute('role', 'role_anonymous_user')
             ->addChild(
-                MenuItem::create('about_us', 'About us', 'https://example.com/about')
+                Item::create('about_us', 'About us', 'https://example.com/about')
                     ->addAttribute('id', 'about-us')
                     ->addAttribute('role', 'role_anonymous_user')
             );
