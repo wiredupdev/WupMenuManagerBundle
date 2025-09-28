@@ -7,7 +7,7 @@ Menu manager bundle provides easy way to create and organize menus in your symfo
 ### Config symfony
 ```
 <?php
-    // aplictaion-folder/config/bundles.php
+    // aplication-folder/config/bundles.php
     return [
         //...
         Wiredupdev\MenuManagerBundle\WudMenuManagerBundle::class => ['all' => true]  
