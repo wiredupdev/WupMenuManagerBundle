@@ -5,7 +5,12 @@
         https://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="wud_menu_manager" class="Wiredupdev\MenuManagerBundle\Menu\Manager" />
 
-        <service id="Wiredupdev\MenuManagerBundle\MenuManager" public="true" />
+        <service id="wud_menu_manager.twig_extension" class="Wiredupdev\MenuManagerBundle\Twig\MenuManagerExtension">
+            <tag name="twig.extension"/>
+            <argument type="service" id="wud_menu_manager" />
+            <argument type="service" id="twig" />
+        </service>
     </services>
 </container>

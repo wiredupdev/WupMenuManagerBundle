@@ -12,22 +12,29 @@ class Item implements \IteratorAggregate, \Countable
 
     private bool $visibility = true;
 
-    private bool $activePage = false;
+    private bool $active = false;
+
+    private array $roles = [];
 
     public function __construct(
         private string $id,
         private string $label,
-        private string|UriResolver|null $uri = null,
+        private ?string $uri = null,
         private ?self $parent = null,
     ) {
         $this->validateIdentifier($id);
     }
 
-    public function setActivePage(bool $activePage): self
+    public function setActive(bool $active): self
     {
-        $this->activePage = $activePage;
+        $this->active = $active;
 
         return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
     }
 
     public function show(): self
@@ -87,7 +94,7 @@ class Item implements \IteratorAggregate, \Countable
 
     public function isRoot(): bool
     {
-        return null !== $this->parent;
+        return null === $this->parent;
     }
 
     public function addChild(self $child): self
@@ -146,18 +153,24 @@ class Item implements \IteratorAggregate, \Countable
 
     public function getUri(): ?string
     {
-        if ($this->uri instanceof UriResolver) {
-            return $this->uri->getResolvedUri();
-        }
-
         return $this->uri;
     }
 
-    public function setUri(string|UriResolver|null $uri): self
+    public function setUri(?string $uri): self
     {
         $this->uri = $uri;
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): void
+    {
+        $this->roles = $roles;
     }
 
     /**
@@ -170,8 +183,9 @@ class Item implements \IteratorAggregate, \Countable
             'label' => $this->label,
             'uri' => $this->uri,
             'attributes' => $this->attributes,
-            'active_page' => $this->activePage,
-            'enabled' => $this->visibility,
+            'active' => $this->active,
+            'visibility' => $this->visibility,
+            'roles' => $this->roles,
             'children' => [],
         ];
 
@@ -209,12 +223,16 @@ class Item implements \IteratorAggregate, \Countable
             }
         }
 
-        if (isset($menuItems['enabled']) && (false === $menuItems['enabled'])) {
-            $menu->disable();
+        if (isset($menuItems['visibility']) && (false === $menuItems['visibility'])) {
+            $menu->hide();
         }
 
         if (isset($menuItems['active_page']) && (false === $menuItems['active_page'])) {
-            $menu->setActivePage(false);
+            $menu->setActive(false);
+        }
+
+        if (isset($menuItems['roles']) && \is_array($menuItems['roles'])) {
+            $menu->setRoles($menuItems['roles']);
         }
 
         return $menu;

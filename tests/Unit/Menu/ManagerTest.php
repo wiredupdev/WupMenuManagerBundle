@@ -22,6 +22,23 @@ class ManagerTest extends TestCase
         );
     }
 
+    public function testConfigureLoadMenuClasses(): void
+    {
+        $this->menuManager->configure([
+            'menu_classes'=> [
+                new class
+                {
+                    public function __invoke(Manager $manager) : void
+                    {
+                        $manager->add(Item::create('dashboard', 'Dashboard', 'https://example.com/admin/dashboard'));
+                    }
+                }
+            ]
+        ]);
+
+        $this->assertTrue($this->menuManager->has('dashboard'));
+    }
+
     public function testModifyExistingMenuItem(): void
     {
         $this->menuManager->get('admin_side_bar')->getChild('products')->setPosition(1);
@@ -58,7 +75,7 @@ class ManagerTest extends TestCase
             ->addChild(
                 Item::create('about_us', 'About us', 'https://example.com/about')
                     ->addAttribute('id', 'about-us')
-                    ->addAttribute('role', 'role_anonymous_user')
+                    ->setRoles(['role_anonymous_user'])
             );
 
         $this->menuManager->add($menuBuilder);

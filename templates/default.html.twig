@@ -1,0 +1,20 @@
+{% macro renderMenu(menu) %}
+    {% import _self as self %}
+    {% if menu.hasChildren %}
+<ul id="{{ menu.id }}">
+    {% for item in menu %}
+        {% if item.isVisible %}
+            <li {% if item.isActive %} class="active" {% endif %}>
+                <a {% if item.isActive %} class="active" {% endif %} href="{{ item.uri }}" {% if item.hasAttribute('target') %} target="{{ item.getAttribute('target') }}" {% endif %} >{{ item.label }}</a>
+                {% if item.hasChildren %}
+                    {{ self.renderMenu(item) }}
+                {% endif %}
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+{% endmacro %}
+{% from _self import renderMenu %}
+
+{{ renderMenu(menu) }}

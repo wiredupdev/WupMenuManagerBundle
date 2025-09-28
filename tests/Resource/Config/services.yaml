@@ -1,0 +1,4 @@
+services:
+  Wiredupdev\MenuManagerBundle\Tests\Resource\MenuTest:
+    tags:
+      - { name: wud_menu_manager.menus }

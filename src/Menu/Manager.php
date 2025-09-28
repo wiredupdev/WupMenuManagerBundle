@@ -6,6 +6,23 @@ class Manager
 {
     private array $menus = [];
 
+    public function __construct(iterable $configs = [])
+    {
+        $this->configure($configs);
+    }
+
+    public function configure(iterable $configs = []): void
+    {
+        if (isset($configs['menu_classes'])) {
+            foreach ($configs['menu_classes'] as $class) {
+                if (false === method_exists($class, '__invoke')) {
+                    throw new Exception(\sprintf('Class "%s" must implement __invoke method.', $class::class));
+                }
+                $class($this);
+            }
+        }
+    }
+
     public function get(string $identifier): Item
     {
         if (($menu = $this->menus[$identifier]) === null) {

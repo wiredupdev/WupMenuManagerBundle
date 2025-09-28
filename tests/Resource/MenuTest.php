@@ -2,39 +2,39 @@
 
 namespace Wiredupdev\MenuManagerBundle\Tests\Resource;
 
-use Wiredupdev\MenuManagerBundle\MenuManager;
-use Wiredupdev\MenuManagerBundle\MenuManager\MenuItem;
+use Wiredupdev\MenuManagerBundle\Menu\Item;
+use Wiredupdev\MenuManagerBundle\Menu\Manager;
 
-class SidebarMenuTest
+class MenuTest
 {
-    public function __invoke(MenuManager $menuManager): void
+    public function __invoke(Manager $menuManager): void
     {
         $menuManager->add(
-            MenuItem::create('main_menu_site', 'main menu site')
+            Item::create('main_menu_site', 'main menu site')
             ->addChild(
-                MenuItem::create('main_menu_home', 'home')
+                Item::create('main_menu_home', 'home')
                 ->addAttribute('class', 'main-menu-home')
             )->addChild(
-                MenuItem::create('main_menu_about_about_us', 'about us')
+                Item::create('main_menu_about_about_us', 'about us')
                 ->addAttribute('class', 'main-menu-about-about-us')
             )
             ->addChild(
-                MenuItem::create('main_menu_contact_us', 'Contact us')
+                Item::create('main_menu_contact_us', 'Contact us')
                 ->addAttribute('class', 'main-menu-contact-us')
             )
             ->addChild(
-                MenuItem::create('main_menu_product', 'Products')
+                Item::create('main_menu_product', 'Products')
                 ->addAttribute('class', 'main-menu-products')
                 ->addChild(
-                    MenuItem::create('main_menu_product_a', 'Product a')
+                    Item::create('main_menu_product_a', 'Product a')
                     ->addAttribute('class', 'main-menu-products-a')
                 )
                 ->addChild(
-                    MenuItem::create('main_menu_product_b', 'Product b')
+                    Item::create('main_menu_product_b', 'Product b')
                     ->addAttribute('class', 'main-menu-products-b')
                 )
                 ->addChild(
-                    MenuItem::create('main_menu_product_c', 'Product c')
+                    Item::create('main_menu_product_c', 'Product c')
                     ->addAttribute('class', 'main-menu-products-c')
                 )
             )

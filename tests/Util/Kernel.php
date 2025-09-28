@@ -3,9 +3,12 @@
 namespace Wiredupdev\MenuManagerBundle\Tests\Util;
 
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\TwigBundle\TwigBundle;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Wiredupdev\MenuManagerBundle\WupMenuManagerBundle;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Wiredupdev\MenuManagerBundle\WudMenuManagerBundle;
 
 class Kernel extends \Symfony\Component\HttpKernel\Kernel
 {
@@ -13,24 +16,32 @@ class Kernel extends \Symfony\Component\HttpKernel\Kernel
     {
         return [
             new FrameworkBundle(),
-            new WupMenuManagerBundle(),
+            new TwigBundle(),
+            new WudMenuManagerBundle(),
         ];
     }
 
+    /**
+     * @throws \Exception
+     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(function (ContainerBuilder $container) {
             $container->loadFromExtension('framework', [
                 'test' => true,
             ]);
-        });
 
-        $loader->load(__DIR__.'/../Resource/Config/wup_menu_manager.yaml');
-        $loader->load(__DIR__.'/../Resource/Config/wup_menu_manager.xml');
+            $loader = new YamlFileLoader(
+                $container,
+                new FileLocator(__DIR__.'/../Resource/config')
+            );
+
+            $loader->load('services.yaml');
+        });
     }
 
     public function getProjectDir(): string
     {
-        return __DIR__.'/../../';
+        return \dirname(__DIR__);
     }
 }
