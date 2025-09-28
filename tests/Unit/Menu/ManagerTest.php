@@ -25,15 +25,14 @@ class ManagerTest extends TestCase
     public function testConfigureLoadMenuClasses(): void
     {
         $this->menuManager->configure([
-            'menu_classes'=> [
-                new class
-                {
-                    public function __invoke(Manager $manager) : void
+            'menu_classes' => [
+                new class {
+                    public function __invoke(Manager $manager): void
                     {
                         $manager->add(Item::create('dashboard', 'Dashboard', 'https://example.com/admin/dashboard'));
                     }
-                }
-            ]
+                },
+            ],
         ]);
 
         $this->assertTrue($this->menuManager->has('dashboard'));

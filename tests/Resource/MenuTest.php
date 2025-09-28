@@ -12,30 +12,30 @@ class MenuTest
         $menuManager->add(
             Item::create('main_menu_site', 'main menu site')
             ->addChild(
-                Item::create('main_menu_home', 'home')
-                ->addAttribute('class', 'main-menu-home')
+                Item::create('main_menu_home', 'home', 'http://localhost/home')
+                ->addAttribute('item_html_class', 'main-menu-home')
             )->addChild(
-                Item::create('main_menu_about_about_us', 'about us')
-                ->addAttribute('class', 'main-menu-about-about-us')
+                Item::create('main_menu_about_about_us', 'about us', 'http://localhost/aboutus')
+                ->addAttribute('item_html_class', 'main-menu-about-about-us')
             )
             ->addChild(
-                Item::create('main_menu_contact_us', 'Contact us')
-                ->addAttribute('class', 'main-menu-contact-us')
+                Item::create('main_menu_contact_us', 'Contact us', 'http://localhost/contactus')
+                ->addAttribute('item_html_class', 'main-menu-contact-us')
             )
             ->addChild(
-                Item::create('main_menu_product', 'Products')
-                ->addAttribute('class', 'main-menu-products')
+                Item::create('main_menu_product', 'Products', 'http://localhost/products')
+                ->addAttribute('item_html_class', 'main-menu-products')
                 ->addChild(
-                    Item::create('main_menu_product_a', 'Product a')
-                    ->addAttribute('class', 'main-menu-products-a')
+                    Item::create('main_menu_product_a', 'Product a', 'http://localhost/products/a')
+                    ->addAttribute('item_html_class', 'main-menu-products-a')
                 )
                 ->addChild(
-                    Item::create('main_menu_product_b', 'Product b')
-                    ->addAttribute('class', 'main-menu-products-b')
+                    Item::create('main_menu_product_b', 'Product b', 'http://localhost/products/b')
+                    ->addAttribute('item_html_class', 'main-menu-products-b')
                 )
                 ->addChild(
-                    Item::create('main_menu_product_c', 'Product c')
-                    ->addAttribute('class', 'main-menu-products-c')
+                    Item::create('main_menu_product_c', 'Product c', 'http://localhost/products/c')
+                    ->addAttribute('item_html_class', 'main-menu-products-c')
                 )
             )
         );

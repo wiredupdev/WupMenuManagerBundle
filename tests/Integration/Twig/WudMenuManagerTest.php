@@ -1,17 +1,17 @@
 <?php
 
 namespace Wiredupdev\MenuManagerBundle\Integration\Twig;
+
 use PHPUnit\Framework\Attributes\CoversClass;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 use Twig\Loader\ChainLoader;
 use Wiredupdev\MenuManagerBundle\Twig\MenuManagerExtension;
 
-
 #[CoversClass(MenuManagerExtension::class)]
 class WudMenuManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
 {
-    public function setUp() : void
+    protected function setUp(): void
     {
         static::bootKernel([
             'debug' => false,
@@ -28,7 +28,7 @@ class WudMenuManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTest
 
         $loader = new ChainLoader([
             new ArrayLoader([
-                'header.html.twig' => '{{ menu("main_menu_site") }}'
+                'header.html.twig' => '{{ menu("main_menu_site") }}',
             ]),
             $twig->getLoader(),
         ]);
@@ -36,6 +36,8 @@ class WudMenuManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTest
         $twig->setLoader($loader);
 
         $rendered = $twig->render('header.html.twig');
+
+        dd($rendered);
 
         $this->assertStringContainsString('id="main_menu_site"', $rendered);
     }
