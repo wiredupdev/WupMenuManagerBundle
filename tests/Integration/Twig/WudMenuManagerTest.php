@@ -37,8 +37,6 @@ class WudMenuManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTest
 
         $rendered = $twig->render('header.html.twig');
 
-        dd($rendered);
-
         $this->assertStringContainsString('id="main_menu_site"', $rendered);
     }
 }
