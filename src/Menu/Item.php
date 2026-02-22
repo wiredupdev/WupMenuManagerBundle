@@ -25,10 +25,16 @@ class Item implements \IteratorAggregate, \Countable
         $this->validateIdentifier($id);
     }
 
-    public function setActive(bool $active): self
+    public function activate(): self
     {
-        $this->active = $active;
+        $this->active = true;
 
+        return $this;
+    }
+
+    public function deactivate(): self
+    {
+        $this->active = false;
         return $this;
     }
 
@@ -133,10 +139,11 @@ class Item implements \IteratorAggregate, \Countable
         return $this->id;
     }
 
-    public function setId(string $id): void
+    public function setId(string $id): self
     {
         $this->validateIdentifier($id);
         $this->id = $id;
+        return $this;
     }
 
     public function getLabel(): string
@@ -168,9 +175,10 @@ class Item implements \IteratorAggregate, \Countable
         return $this->roles;
     }
 
-    public function setRoles(array $roles): void
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+        return $this;
     }
 
     /**
@@ -228,7 +236,7 @@ class Item implements \IteratorAggregate, \Countable
         }
 
         if (isset($menuItems['active_page']) && (false === $menuItems['active_page'])) {
-            $menu->setActive(false);
+            $menu->activate();
         }
 
         if (isset($menuItems['roles']) && \is_array($menuItems['roles'])) {

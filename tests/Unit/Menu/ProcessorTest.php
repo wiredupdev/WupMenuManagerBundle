@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\Menu;
+namespace  Wiredupdev\MenuManagerBundle\Tests\Unit\Menu;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +21,7 @@ class ProcessorTest extends TestCase
             public function process(Item $item): void
             {
                 if ('https://www.example.com/' == $item->getUri()) {
-                    $item->setActive(true);
+                    $item->activate();
                 }
             }
         });

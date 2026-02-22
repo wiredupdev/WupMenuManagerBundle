@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class MenuClassConfigPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $configs = ['menu_classes' => []];
         foreach ($container->findTaggedServiceIds('wud_menu_manager.menus', true) as $serviceId => $tagAttributes) {

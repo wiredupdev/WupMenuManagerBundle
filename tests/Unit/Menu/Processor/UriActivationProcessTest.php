@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\Menu\Processor;
+namespace  Wiredupdev\MenuManagerBundle\Tests\Unit\Menu\Processor;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +16,7 @@ class UriActivationProcessTest extends TestCase
 
     protected function setUp(): void
     {
-        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack = $this->createStub(RequestStack::class);
         $requestStack->method('getCurrentRequest')->willReturn(Request::create('/test-path'));
         $this->process = new UriActivationProcess($requestStack);
     }

@@ -24,7 +24,7 @@ class Kernel extends \Symfony\Component\HttpKernel\Kernel
     /**
      * @throws \Exception
      */
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load(function (ContainerBuilder $container) {
             $container->loadFromExtension('framework', [
@@ -33,7 +33,7 @@ class Kernel extends \Symfony\Component\HttpKernel\Kernel
 
             $loader = new YamlFileLoader(
                 $container,
-                new FileLocator(__DIR__.'/../Resource/config')
+                new FileLocator(__DIR__.'/../Resource/Config')
             );
 
             $loader->load('services.yaml');

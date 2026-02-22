@@ -1,6 +1,6 @@
 <?php
 
-namespace Menu;
+namespace  Wiredupdev\MenuManagerBundle\Tests\Unit\Menu;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;

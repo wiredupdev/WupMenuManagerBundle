@@ -15,7 +15,7 @@ class UriActivationProcess implements ProcessInterface
     public function process(Item $item): void
     {
         if ($item->getUri() === $this->requestStack->getCurrentRequest()->getUri()) {
-            $item->setActive(true);
+            $item->activate();
         }
     }
 }

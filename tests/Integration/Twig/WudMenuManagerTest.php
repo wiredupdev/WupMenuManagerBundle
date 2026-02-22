@@ -1,6 +1,6 @@
 <?php
 
-namespace Wiredupdev\MenuManagerBundle\Integration\Twig;
+namespace Wiredupdev\MenuManagerBundle\Tests\Integration\Twig;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use Twig\Environment;

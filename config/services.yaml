@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+services:
+  wud_menu_manager:
+    class: Wiredupdev\MenuManagerBundle\Menu\Manager
+  "wud_menu_manager.processor":
+    class: Wiredupdev\MenuManagerBundle\Menu\Processor
+  "wud_menu_manager.twig_extension":
+    class: Wiredupdev\MenuManagerBundle\Twig\MenuManagerExtension
+    arguments:
+      - "@wud_menu_manager"
+      - "@wud_menu_manager.processor"
+      - "@twig"
+    tags:
+      - { name: "twig.extension" }

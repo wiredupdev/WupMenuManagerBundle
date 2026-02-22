@@ -15,8 +15,11 @@
         <server name="KERNEL_CLASS" value="Wiredupdev\MenuManagerBundle\Tests\Util\Kernel" />
     </php>
     <testsuites>
-        <testsuite name="tests">
-            <directory>tests/</directory>
+        <testsuite name="Unit Testing">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Unit Integration">
+            <directory>tests/Integration</directory>
         </testsuite>
     </testsuites>
 
