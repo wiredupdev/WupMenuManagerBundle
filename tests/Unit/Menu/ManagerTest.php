@@ -51,13 +51,12 @@ class ManagerTest extends TestCase
     public function testAddMenu(): void
     {
         $menuBuilder = Item::create('home_menu', '')
-            ->addAttribute('id', 'id')
-            ->addAttribute('class', 'class')
-            ->addAttribute('role', 'role_anonymous_user')
+            ->addAttribute(Item\AttributeType::ITEM_CONTAINER,'id', 'id')
+            ->addAttribute(Item\AttributeType::ITEM_CONTAINER,'class', 'class')
+            ->addAttribute(Item\AttributeType::ITEM_CONTAINER,'role', 'role_anonymous_user')
             ->addChild(
                 Item::create('about_us', 'About us', 'https://example.com/about')
-                    ->addAttribute('id', 'about-us')
-                    ->addAttribute('role', 'role_anonymous_user')
+                    ->addAttribute(Item\AttributeType::ITEM_CONTAINER, 'id', 'about-us')
             );
 
         $this->menuManager->add($menuBuilder);
@@ -68,12 +67,11 @@ class ManagerTest extends TestCase
     public function testRemoveMenu(): void
     {
         $menuBuilder = Item::create('home_menu', '')
-            ->addAttribute('id', 'id')
-            ->addAttribute('class', 'class')
-            ->addAttribute('role', 'role_anonymous_user')
+            ->addAttribute(Item\AttributeType::ITEM_CONTAINER,'id',  'id')
+            ->addAttribute(Item\AttributeType::ITEM_CONTAINER,'class', 'class')
             ->addChild(
                 Item::create('about_us', 'About us', 'https://example.com/about')
-                    ->addAttribute('id', 'about-us')
+                    ->addAttribute(Item\AttributeType::ITEM_CONTAINER,'id', 'about-us')
                     ->setRoles(['role_anonymous_user'])
             );
 

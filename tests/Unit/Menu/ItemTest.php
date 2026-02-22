@@ -12,19 +12,19 @@ class ItemTest extends TestCase
     public function testAddAttribute(): void
     {
         $menu = Item::create('main_menu', 'main menu')
-            ->addAttribute('class', 'some-class');
+            ->addAttribute(Item\AttributeType::ITEM_CONTAINER, 'class',  'some-class');
 
-        $this->assertSame('some-class', $menu->getAttribute('class'), "Attribute 'class' wasn't set correctly.");
+        $this->assertSame('some-class', $menu->getAttribute(Item\AttributeType::ITEM_CONTAINER,'class'), "Attribute 'class' wasn't set correctly.");
     }
 
     public function testRemoveAttribute(): void
     {
         $menu = Item::create('main_menu', 'main menu')
-            ->addAttribute('id', 'my_id');
+            ->addAttribute(Item\AttributeType::ITEM_CONTAINER,'id', 'my_id');
 
-        $menu->removeAttribute('id');
+        $menu->removeAttribute(Item\AttributeType::ITEM_CONTAINER,'id');
 
-        $this->assertFalse($menu->hasAttribute('id'), "Attribute 'class' wasn't removed correctly.");
+        $this->assertFalse($menu->hasAttribute(Item\AttributeType::ITEM_CONTAINER, 'id'), "Attribute 'class' wasn't removed correctly.");
     }
 
     public function testAddChild(): void

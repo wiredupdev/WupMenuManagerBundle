@@ -2,27 +2,25 @@
 
 namespace Wiredupdev\MenuManagerBundle\Menu;
 
+use Wiredupdev\MenuManagerBundle\Menu\Item\AttributeType;
+
 class Item implements \IteratorAggregate, \Countable
 {
     private array $children = [];
-
     private array $attributes = [];
-
     private int $position = 0;
-
     private bool $visibility = true;
-
     private bool $active = false;
-
     private array $roles = [];
+    private ?self $parent = null;
 
     public function __construct(
         private string $id,
         private string $label,
-        private ?string $uri = null,
-        private ?self $parent = null,
-    ) {
-        $this->validateIdentifier($id);
+        private ?string $uri = null
+    )
+    {
+        $this->setId($id);
     }
 
     public function activate(): self
@@ -62,28 +60,30 @@ class Item implements \IteratorAggregate, \Countable
         return $this->visibility;
     }
 
-    public function addAttribute(string $name, mixed $value): self
+    public function addAttribute(AttributeType $attributeType, string $name, mixed $value): self
     {
-        $this->attributes[$name] = $value;
+        $this->attributes[$attributeType->value][$name] = $value;
 
         return $this;
     }
 
-    public function hasAttribute(string $name): bool
+    public function hasAttribute(AttributeType $attributeType, string $name): bool
     {
-        return isset($this->attributes[$name]);
+        return isset($this->attributes[$attributeType->value][$name]);
     }
 
-    public function removeAttribute(string $name): self
+    public function removeAttribute(AttributeType $attributeType, string $name): self
     {
-        unset($this->attributes[$name]);
+        if ($this->hasAttribute($attributeType, $name)) {
+            unset($this->attributes[$attributeType->value][$name]);
+        }
 
         return $this;
     }
 
-    public function getAttribute(string $name): mixed
+    public function getAttribute(AttributeType $attributeType, string $name): mixed
     {
-        return $this->attributes[$name] ?? null;
+        return $this->attributes[$attributeType->value][$name] ?? null;
     }
 
     public function setParent(?self $parent): self
@@ -119,7 +119,7 @@ class Item implements \IteratorAggregate, \Countable
 
     public function hasChildren(): bool
     {
-        return (bool) $this->count();
+        return (bool)$this->count();
     }
 
     public function removeChild(string $identifier): self
@@ -170,6 +170,14 @@ class Item implements \IteratorAggregate, \Countable
         return $this;
     }
 
+    public function removeRole(string $role): self
+    {
+        if($roleKey = array_search($role, $this->roles, true)){
+            unset($this->roles[$roleKey]);
+        }
+        return $this;
+    }
+
     public function getRoles(): array
     {
         return $this->roles;
@@ -216,12 +224,14 @@ class Item implements \IteratorAggregate, \Countable
         $menu = new self(
             $menuItems['id'],
             $menuItems['label'],
-            $menuItems['uri'] ?? null
+            $menuItems['uri'] ?? null,
         );
 
         if (isset($menuItems['attributes'])) {
-            foreach ($menuItems['attributes'] as $name => $value) {
-                $menu->addAttribute($name, $value);
+            foreach ($menuItems['attributes'] as $type => $attribute) {
+                foreach ($attribute as $name => $value) {
+                    $menu->addAttribute(AttributeType::from($type), $name, $value);
+                }
             }
         }
 
@@ -235,7 +245,7 @@ class Item implements \IteratorAggregate, \Countable
             $menu->hide();
         }
 
-        if (isset($menuItems['active_page']) && (false === $menuItems['active_page'])) {
+        if (isset($menuItems['active_page']) && (true === $menuItems['active_page'])) {
             $menu->activate();
         }
 
@@ -286,7 +296,7 @@ class Item implements \IteratorAggregate, \Countable
 
     public function sortByPosition(bool $sortNested = false): self
     {
-        $this->sort(fn (Item $menuA, Item $menuB) => $menuA->getPosition() <=> $menuB->getPosition(), $sortNested);
+        $this->sort(fn(Item $menuA, Item $menuB) => $menuA->getPosition() <=> $menuB->getPosition(), $sortNested);
 
         return $this;
     }
