@@ -1,35 +1,18 @@
 <?php
 
-namespace  Wiredupdev\MenuManagerBundle\Tests\Unit\Menu;
+namespace Wiredupdev\MenuManagerBundle\Tests\Unit\Menu;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Wiredupdev\MenuManagerBundle\Menu\Item;
+use Wiredupdev\MenuManagerBundle\Menu\UriGeneratorInterface;
 
 #[CoversClass(Item::class)]
 class ItemTest extends TestCase
 {
-    public function testAddAttribute(): void
-    {
-        $menu = Item::create('main_menu', 'main menu')
-            ->addAttribute('class', 'some-class');
-
-        $this->assertSame('some-class', $menu->getAttribute('class'), "Attribute 'class' wasn't set correctly.");
-    }
-
-    public function testRemoveAttribute(): void
-    {
-        $menu = Item::create('main_menu', 'main menu')
-            ->addAttribute('id', 'my_id');
-
-        $menu->removeAttribute('id');
-
-        $this->assertFalse($menu->hasAttribute('id'), "Attribute 'class' wasn't removed correctly.");
-    }
-
     public function testAddChild(): void
     {
-        $menu = Item::create('main_menu', 'root')
+        $menu = Item::create('main_menu', '')
             ->addChild(
                 Item::create('home', 'Home')
             );
@@ -37,50 +20,26 @@ class ItemTest extends TestCase
         $this->assertInstanceOf(Item::class, $menu->getChild('home'));
     }
 
-    public function testFromArray(): void
+    public function testAddAttribute(): void
     {
-        $menu = Item::fromArray([
-            'id' => 'main_menu',
-            'label' => 'main menu',
-            'children' => [
-                [
-                    'id' => 'home',
-                    'label' => 'home',
-                    'uri' => 'https://www.example.com/',
-                ],
-            ],
-        ]);
+        $menu = Item::create('main_menu', '')
+            ->addAttribute('html', 'class', 'bg-gray-100')
+            ->addAttribute('security', 'roles', ['ROLE_ADMIN']);
 
-        $this->assertSame('main_menu', $menu->getId());
+        $this->assertEquals('bg-gray-100', $menu->getAttribute('html', 'class'));
+        $this->assertEquals(['ROLE_ADMIN'], $menu->getAttribute('security', 'roles'));
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function testSortingByPosition(): void
+    public function testRemoveAttribute(): void
     {
-        $menu = Item::fromArray([
-            'id' => 'main_menu',
-            'label' => 'main menu',
-            'children' => [
-                [
-                    'id' => 'about_us',
-                    'label' => 'About Us',
-                    'uri' => 'https://www.example.com/about-us/',
-                ],
-                [
-                    'id' => 'home',
-                    'label' => 'home',
-                    'uri' => 'https://www.example.com/',
-                ],
-            ],
-        ]);
+        $menu = Item::create('main_menu', '')
+            ->addAttribute('html', 'class', 'bg-gray-100')
+            ->addAttribute('security', 'roles', ['ROLE_ADMIN']);
 
-        $menu->getChild('home')->setPosition(1);
-        $menu->getChild('about_us')->setPosition(2);
+        $menu->removeAttribute('security', 'roles');
 
-        $menu->sortByPosition(true);
-        $this->assertSame(['home', 'about_us'], array_keys($menu->getIterator()->getArrayCopy()), 'Children are not in the correct order.');
+        $this->assertEquals('bg-gray-100', $menu->getAttribute('html', 'class'));
+        $this->assertFalse($menu->hasAttribute('security', 'roles'));
     }
 
     public function testRemoveChild(): void
@@ -93,20 +52,36 @@ class ItemTest extends TestCase
         $this->assertNull($menu->getChild('home'));
     }
 
+    public function testUriGenerator(): void
+    {
+        $urlGenerator = $this->createMock(UriGeneratorInterface::class);
+
+        $urlGenerator->expects($this->once())
+            ->method('generate')
+            ->willReturn('https://example.com/');
+
+        $urlGenerator->expects($this->once())
+            ->method('isActive')
+            ->willReturn(true);
+
+        $urlGenerator->expects($this->atLeast(0))
+            ->method('getTarget')
+            ->willReturn('_self');
+
+        $menu = Item::create('main_menu', '')
+            ->addChild(
+                Item::create('home', 'Home', $urlGenerator)
+            );
+
+        $this->assertInstanceOf(Item::class, $menu->getChild('home'));
+        $this->assertEquals('https://example.com/', $menu->getChild('home')->getUri());
+        $this->assertEquals('_self', $menu->getChild('home')->getUriTarget());
+        $this->assertTrue($menu->getChild('home')->isActive());
+    }
+
     public function testThrowsInvalidArgumentException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        Item::create('invalid identifier', '');
-    }
-
-    public function testFromArrayThrowsInvalidArgumentExceptionWhenMissingId(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        Item::fromArray([
-            'label' => 'Menu',
-            'children' => [],
-            'parent' => null,
-        ]);
+        Item::create('invalid identifier', '!invalid identifier');
     }
 }

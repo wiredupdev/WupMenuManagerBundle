@@ -6,20 +6,36 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Wiredupdev\MenuManagerBundle\Menu\Item;
 use Wiredupdev\MenuManagerBundle\Menu\Manager;
+use Wiredupdev\MenuManagerBundle\Menu\UriGeneratorInterface;
 
 #[CoversClass(Item::class)]
 class ManagerTest extends TestCase
 {
     private Manager $menuManager;
 
+    private UriGeneratorInterface $uriGenerator;
+
     protected function setUp(): void
     {
+        $this->uriGenerator = $this->createStub(UriGeneratorInterface::class);
+
+        $this->uriGenerator->method('generate')
+            ->willReturn('https://example.com/');
+
+        $this->uriGenerator
+            ->method('isActive')
+            ->willReturn(true);
+
+        $this->uriGenerator
+            ->method('getTarget')
+            ->willReturn('_self');
+
         $this->menuManager = new Manager();
         $this->menuManager->add(
             Item::create('admin_side_bar', '')
-            ->addChild(Item::create('profile', 'Profile', 'https://example.com/profile'))
-            ->addChild(Item::create('products', 'Products', 'https://example.com/products'))
-        );
+            ->addChild(Item::create('profile', 'Profile', $this->uriGenerator)
+            ->addChild(Item::create('products', 'Products', $this->uriGenerator))
+            ));
     }
 
     public function testConfigureLoadMenuClasses(): void
@@ -29,7 +45,7 @@ class ManagerTest extends TestCase
                 new class {
                     public function __invoke(Manager $manager): void
                     {
-                        $manager->add(Item::create('dashboard', 'Dashboard', 'https://example.com/admin/dashboard'));
+                        $manager->add(Item::create('dashboard', 'Dashboard'));
                     }
                 },
             ],
@@ -38,26 +54,12 @@ class ManagerTest extends TestCase
         $this->assertTrue($this->menuManager->has('dashboard'));
     }
 
-    public function testModifyExistingMenuItem(): void
-    {
-        $this->menuManager->get('admin_side_bar')->getChild('products')->setPosition(1);
-        $this->menuManager->get('admin_side_bar')->getChild('profile')->setPosition(2);
-
-        $menu = $this->menuManager->get('admin_side_bar')->sortByPosition(true);
-
-        $this->assertSame(['products', 'profile'], array_keys($menu->getIterator()->getArrayCopy()));
-    }
-
     public function testAddMenu(): void
     {
         $menuBuilder = Item::create('home_menu', '')
-            ->addAttribute('id', 'id')
-            ->addAttribute('class', 'class')
-            ->addAttribute('role', 'role_anonymous_user')
+
             ->addChild(
-                Item::create('about_us', 'About us', 'https://example.com/about')
-                    ->addAttribute('id', 'about-us')
-                    ->addAttribute('role', 'role_anonymous_user')
+                Item::create('about_us', 'About us', $this->uriGenerator)
             );
 
         $this->menuManager->add($menuBuilder);
@@ -68,13 +70,8 @@ class ManagerTest extends TestCase
     public function testRemoveMenu(): void
     {
         $menuBuilder = Item::create('home_menu', '')
-            ->addAttribute('id', 'id')
-            ->addAttribute('class', 'class')
-            ->addAttribute('role', 'role_anonymous_user')
             ->addChild(
-                Item::create('about_us', 'About us', 'https://example.com/about')
-                    ->addAttribute('id', 'about-us')
-                    ->setRoles(['role_anonymous_user'])
+                Item::create('about_us', 'About us', $this->uriGenerator)
             );
 
         $this->menuManager->add($menuBuilder);

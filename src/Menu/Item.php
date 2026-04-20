@@ -14,13 +14,12 @@ class Item implements \IteratorAggregate, \Countable
 
     private bool $active = false;
 
-    private array $roles = [];
+    private ?self $parent = null;
 
     public function __construct(
         private string $id,
         private string $label,
-        private ?string $uri = null,
-        private ?self $parent = null,
+        private ?UriGeneratorInterface $uri = null,
     ) {
         $this->validateIdentifier($id);
     }
@@ -35,11 +34,16 @@ class Item implements \IteratorAggregate, \Countable
     public function deactivate(): self
     {
         $this->active = false;
+
         return $this;
     }
 
     public function isActive(): bool
     {
+        if ($this->uri?->isActive()) {
+            $this->activate();
+        }
+
         return $this->active;
     }
 
@@ -62,28 +66,33 @@ class Item implements \IteratorAggregate, \Countable
         return $this->visibility;
     }
 
-    public function addAttribute(string $name, mixed $value): self
+    public function addAttribute(string $ype, string $name, mixed $value): self
     {
-        $this->attributes[$name] = $value;
+        if (!isset($this->attributes[$ype])) {
+            $this->attributes[$ype] = [];
+        }
+        $this->attributes[$ype][$name] = $value;
 
         return $this;
     }
 
-    public function hasAttribute(string $name): bool
+    public function hasAttribute(string $type, string $name): bool
     {
-        return isset($this->attributes[$name]);
+        return isset($this->attributes[$type][$name]);
     }
 
-    public function removeAttribute(string $name): self
+    public function removeAttribute(string $type, string $name): self
     {
-        unset($this->attributes[$name]);
+        if ($this->hasAttribute($type, $name)) {
+            unset($this->attributes[$type][$name]);
+        }
 
         return $this;
     }
 
-    public function getAttribute(string $name): mixed
+    public function getAttribute(string $type, string $name): mixed
     {
-        return $this->attributes[$name] ?? null;
+        return $this->attributes[$type][$name] ?? null;
     }
 
     public function setParent(?self $parent): self
@@ -143,6 +152,7 @@ class Item implements \IteratorAggregate, \Countable
     {
         $this->validateIdentifier($id);
         $this->id = $id;
+
         return $this;
     }
 
@@ -160,90 +170,19 @@ class Item implements \IteratorAggregate, \Countable
 
     public function getUri(): ?string
     {
-        return $this->uri;
+        return $this->uri?->generate();
     }
 
-    public function setUri(?string $uri): self
+    public function getUriTarget(): string
+    {
+        return $this->uri?->getTarget();
+    }
+
+    public function setUri(UriGeneratorInterface $uri): self
     {
         $this->uri = $uri;
 
         return $this;
-    }
-
-    public function getRoles(): array
-    {
-        return $this->roles;
-    }
-
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-        return $this;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function toArray(): array
-    {
-        $menuItem = [
-            'id' => $this->id,
-            'label' => $this->label,
-            'uri' => $this->uri,
-            'attributes' => $this->attributes,
-            'active' => $this->active,
-            'visibility' => $this->visibility,
-            'roles' => $this->roles,
-            'children' => [],
-        ];
-
-        /** @var self $child */
-        foreach ($this->children as $child) {
-            $menuItem['children'][] = $child->toArray();
-        }
-
-        return $menuItem;
-    }
-
-    public static function fromArray(array $menuItems): self
-    {
-        $requiredOptions = ['id', 'label'];
-
-        if (\count($requiredOptions) !== \count(array_intersect(array_keys($menuItems), $requiredOptions))) {
-            throw new \InvalidArgumentException(\sprintf('The menu should have at least %s options set', implode(', ', $requiredOptions)));
-        }
-
-        $menu = new self(
-            $menuItems['id'],
-            $menuItems['label'],
-            $menuItems['uri'] ?? null
-        );
-
-        if (isset($menuItems['attributes'])) {
-            foreach ($menuItems['attributes'] as $name => $value) {
-                $menu->addAttribute($name, $value);
-            }
-        }
-
-        if (isset($menuItems['children'])) {
-            foreach ($menuItems['children'] as $child) {
-                $menu->addChild(self::fromArray($child));
-            }
-        }
-
-        if (isset($menuItems['visibility']) && (false === $menuItems['visibility'])) {
-            $menu->hide();
-        }
-
-        if (isset($menuItems['active_page']) && (false === $menuItems['active_page'])) {
-            $menu->activate();
-        }
-
-        if (isset($menuItems['roles']) && \is_array($menuItems['roles'])) {
-            $menu->setRoles($menuItems['roles']);
-        }
-
-        return $menu;
     }
 
     private function validateIdentifier(string $identifier): void
@@ -270,28 +209,7 @@ class Item implements \IteratorAggregate, \Countable
         return \count($this->children);
     }
 
-    public function sort($callback, bool $sortNested = false): self
-    {
-        uasort($this->children, $callback);
-
-        if ($sortNested) {
-            /** @var self $child */
-            foreach ($this->children as $child) {
-                $child->sort($callback);
-            }
-        }
-
-        return $this;
-    }
-
-    public function sortByPosition(bool $sortNested = false): self
-    {
-        $this->sort(fn (Item $menuA, Item $menuB) => $menuA->getPosition() <=> $menuB->getPosition(), $sortNested);
-
-        return $this;
-    }
-
-    public static function create(string $identifier, string $label, ?string $uri = null): static
+    public static function create(string $identifier, string $label, ?UriGeneratorInterface $uri = null): static
     {
         return new self($identifier, $label, $uri);
     }
