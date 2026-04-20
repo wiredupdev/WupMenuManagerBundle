@@ -2,8 +2,6 @@
 
 namespace Wiredupdev\MenuManagerBundle\Menu;
 
-use Wiredupdev\MenuManagerBundle\Menu\Processor\ProcessInterface;
-
 class Processor implements ProcessInterface
 {
     private array $processes = [];
