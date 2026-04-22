@@ -7,37 +7,21 @@ use PHPUnit\Framework\TestCase;
 use Wiredupdev\MenuManagerBundle\Menu\Item;
 use Wiredupdev\MenuManagerBundle\Menu\ProcessInterface;
 use Wiredupdev\MenuManagerBundle\Menu\Processor;
-use Wiredupdev\MenuManagerBundle\Menu\UriGeneratorInterface;
 
 #[CoversClass(Processor::class)]
 class ProcessorTest extends TestCase
 {
     private Processor $processor;
 
-    private UriGeneratorInterface $uriGenerator;
-
     protected function setUp(): void
     {
-        $this->uriGenerator = $this->createStub(UriGeneratorInterface::class);
-
-        $this->uriGenerator->method('generate')
-            ->willReturn('https://example.com/');
-
-        $this->uriGenerator
-            ->method('isActive')
-            ->willReturn(true);
-
-        $this->uriGenerator
-            ->method('getTarget')
-            ->willReturn('_self');
-
         $this->processor = new Processor();
 
         $this->processor->addProcess(process: new class implements ProcessInterface {
             public function process(Item $item): void
             {
-                $item->addAttribute('html', 'href', $item->getUri());
-                $item->addAttribute('html', 'target', $item->getUriTarget());
+                $item->addAttribute('html', 'href', $item->getUrl());
+                $item->addAttribute('html', 'target', $item->getOption('target'));
 
                 if ($item->isActive()) {
                     $classAttr = \is_array($item->getAttribute('html', 'class'))
@@ -52,13 +36,14 @@ class ProcessorTest extends TestCase
 
     public function testProcessing(): void
     {
-        $item = Item::create('home', 'Home', $this->uriGenerator);
+        $item = Item::create('home', 'Home', ['url' => 'https://example.com/home']);
+        $item->activate();
         $item->addAttribute('html', 'class', 'item');
 
         $this->processor->process($item);
 
         $this->assertEquals('_self', $item->getAttribute('html', 'target'));
         $this->assertEquals(['item', 'active'], $item->getAttribute('html', 'class'));
-        $this->assertEquals('https://example.com/', $item->getAttribute('html', 'href'));
+        $this->assertEquals('https://example.com/home', $item->getAttribute('html', 'href'));
     }
 }

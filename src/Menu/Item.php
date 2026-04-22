@@ -19,9 +19,18 @@ class Item implements \IteratorAggregate, \Countable
     public function __construct(
         private string $id,
         private string $label,
-        private ?UriGeneratorInterface $uri = null,
+        private array $options = [],
     ) {
         $this->validateIdentifier($id);
+
+        $this->options = array_merge([
+            'url' => null,
+            'route' => [
+                'name' => null,
+                'parameters' => [],
+            ],
+            'target' => '_self',
+        ], $this->options);
     }
 
     public function activate(): self
@@ -40,10 +49,6 @@ class Item implements \IteratorAggregate, \Countable
 
     public function isActive(): bool
     {
-        if ($this->uri?->isActive()) {
-            $this->activate();
-        }
-
         return $this->active;
     }
 
@@ -98,7 +103,6 @@ class Item implements \IteratorAggregate, \Countable
     public function setParent(?self $parent): self
     {
         $this->parent = $parent;
-
         return $this;
     }
 
@@ -168,21 +172,20 @@ class Item implements \IteratorAggregate, \Countable
         return $this;
     }
 
-    public function getUri(): ?string
+    public function setUrl(?string $url): self
     {
-        return $this->uri?->generate();
-    }
-
-    public function getUriTarget(): string
-    {
-        return $this->uri?->getTarget();
-    }
-
-    public function setUri(UriGeneratorInterface $uri): self
-    {
-        $this->uri = $uri;
-
+        $this->options['url'] = $url;
         return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->options['url'] ?? null;
+    }
+
+    public function getOption(string $name, mixed $default = null): mixed
+    {
+        return $this->options[$name] ?? $default;
     }
 
     private function validateIdentifier(string $identifier): void
@@ -209,8 +212,8 @@ class Item implements \IteratorAggregate, \Countable
         return \count($this->children);
     }
 
-    public static function create(string $identifier, string $label, ?UriGeneratorInterface $uri = null): static
+    public static function create(string $id, string $label, array $options = []): static
     {
-        return new self($identifier, $label, $uri);
+        return new self($id, $label, $options);
     }
 }

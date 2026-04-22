@@ -4,6 +4,10 @@ services:
     class: Wiredupdev\MenuManagerBundle\Menu\Manager
   "wud_menu_manager.processor":
     class: Wiredupdev\MenuManagerBundle\Menu\Processor
+  "wud_menu_manager.processor.urlResolver":
+    class: Wiredupdev\MenuManagerBundle\Menu\Processor\UrlResolverProcessor
+    tags:
+      - {name: "wud_menu_manager.processes"}
   "wud_menu_manager.twig_extension":
     class: Wiredupdev\MenuManagerBundle\Twig\MenuManagerExtension
     arguments:
