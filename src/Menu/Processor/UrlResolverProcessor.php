@@ -17,15 +17,15 @@ readonly class UrlResolverProcessor implements ProcessInterface
 
     public function process(Item $item): void
     {
-        if (false === isset($item->getOption('route')['name']) && null === $item->getUrl()) {
+        if (null === $item->getOption('route') && null === $item->getUrl()) {
             return;
         }
 
-        if (isset($item->getOption('route')['name'])) {
+        if ($item->getOption('route')) {
             $item->setUrl(
                 $this->urlGenerator->generate(
                     $item->getOption('route')['name'],
-                    $item->getOption('route')['parameters'] ?? [])
+                    $item->getOption('route')['parameters'])
             );
         }
 
