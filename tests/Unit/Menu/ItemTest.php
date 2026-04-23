@@ -5,6 +5,7 @@ namespace Wiredupdev\MenuManagerBundle\Tests\Unit\Menu;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Wiredupdev\MenuManagerBundle\Menu\Item;
+use Wiredupdev\MenuManagerBundle\Menu\UriGeneratorInterface;
 
 #[CoversClass(Item::class)]
 class ItemTest extends TestCase
@@ -13,18 +14,10 @@ class ItemTest extends TestCase
     {
         $menu = Item::create('main_menu', '')
             ->addChild(
-                Item::create('home', 'Home', ['uri' => 'http://example.com/home']),
-            )->addChild(
-                Item::create('products', 'Products', ['route' => 'app_products'])
-                    ->addChild(
-                        Item::create(
-                            'product_one', 'Product One',
-                            ['route' => 'app_product', 'parameters' => ['name' => 'one']])
-                    )
+                Item::create('home', 'Home')
             );
 
         $this->assertInstanceOf(Item::class, $menu->getChild('home'));
-        $this->assertEquals('http://example.com/home', $menu->getChild('home')->getUrl());
     }
 
     public function testAddAttribute(): void
@@ -57,6 +50,33 @@ class ItemTest extends TestCase
             );
         $menu->removeChild('home');
         $this->assertNull($menu->getChild('home'));
+    }
+
+    public function testUriGenerator(): void
+    {
+        $urlGenerator = $this->createMock(UriGeneratorInterface::class);
+
+        $urlGenerator->expects($this->once())
+            ->method('generate')
+            ->willReturn('https://example.com/');
+
+        $urlGenerator->expects($this->once())
+            ->method('isActive')
+            ->willReturn(true);
+
+        $urlGenerator->expects($this->atLeast(0))
+            ->method('getTarget')
+            ->willReturn('_self');
+
+        $menu = Item::create('main_menu', '')
+            ->addChild(
+                Item::create('home', 'Home', $urlGenerator)
+            );
+
+        $this->assertInstanceOf(Item::class, $menu->getChild('home'));
+        $this->assertEquals('https://example.com/', $menu->getChild('home')->getUri());
+        $this->assertEquals('_self', $menu->getChild('home')->getUriTarget());
+        $this->assertTrue($menu->getChild('home')->isActive());
     }
 
     public function testThrowsInvalidArgumentException(): void
