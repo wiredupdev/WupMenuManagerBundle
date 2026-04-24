@@ -16,7 +16,7 @@ class Manager
         if (isset($configs['menu_classes'])) {
             foreach ($configs['menu_classes'] as $class) {
                 if (false === method_exists($class, '__invoke')) {
-                    throw new Exception(\sprintf('Class "%s" must implement __invoke method.', $class::class));
+                    throw new \BadMethodCallException(\sprintf('Class "%s" must implement __invoke method.', $class::class));
                 }
                 $class($this);
             }

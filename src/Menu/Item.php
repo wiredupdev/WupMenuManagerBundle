@@ -2,7 +2,7 @@
 
 namespace Wiredupdev\MenuManagerBundle\Menu;
 
-class Item implements \IteratorAggregate, \Countable
+class Item implements \IteratorAggregate, \Countable, MenuItemInterface
 {
     private array $children = [];
 
@@ -66,12 +66,12 @@ class Item implements \IteratorAggregate, \Countable
         return $this->visibility;
     }
 
-    public function addAttribute(string $ype, string $name, mixed $value): self
+    public function addAttribute(string $type, string $name, mixed $value): self
     {
-        if (!isset($this->attributes[$ype])) {
-            $this->attributes[$ype] = [];
+        if (!isset($this->attributes[$type])) {
+            $this->attributes[$type] = [];
         }
-        $this->attributes[$ype][$name] = $value;
+        $this->attributes[$type][$name] = $value;
 
         return $this;
     }
@@ -112,7 +112,7 @@ class Item implements \IteratorAggregate, \Countable
         return null === $this->parent;
     }
 
-    public function addChild(self $child): self
+    public function addChild(MenuItemInterface $child): self
     {
         $child->setParent($this);
         $child->setPosition($this->count() + 1);
@@ -121,9 +121,9 @@ class Item implements \IteratorAggregate, \Countable
         return $this;
     }
 
-    public function getChild(string $identifier): ?self
+    public function getChild(string $id): ?MenuItemInterface
     {
-        return $this->children[$identifier] ?? null;
+        return $this->children[$id] ?? null;
     }
 
     public function hasChildren(): bool
@@ -131,9 +131,9 @@ class Item implements \IteratorAggregate, \Countable
         return (bool) $this->count();
     }
 
-    public function removeChild(string $identifier): self
+    public function removeChild(string $id): self
     {
-        unset($this->children[$identifier]);
+        unset($this->children[$id]);
 
         return $this;
     }
@@ -209,8 +209,8 @@ class Item implements \IteratorAggregate, \Countable
         return \count($this->children);
     }
 
-    public static function create(string $identifier, string $label, ?UriGeneratorInterface $uri = null): static
+    public static function create(string $id, string $label, ?UriGeneratorInterface $uri = null): static
     {
-        return new self($identifier, $label, $uri);
+        return new self($id, $label, $uri);
     }
 }
