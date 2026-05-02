@@ -18,7 +18,7 @@ class Manager
                 if (false === method_exists($class, '__invoke')) {
                     throw new \BadMethodCallException(\sprintf('Class "%s" must implement __invoke method.', $class::class));
                 }
-                $class($this);
+                $class();
             }
         }
     }

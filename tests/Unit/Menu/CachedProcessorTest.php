@@ -4,16 +4,19 @@ namespace Wiredupdev\MenuManagerBundle\Tests\Unit\Menu;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Wiredupdev\MenuManagerBundle\Menu\Cacheable;
+use Wiredupdev\MenuManagerBundle\Menu\CachedProcessor;
 use Wiredupdev\MenuManagerBundle\Menu\Item;
 use Wiredupdev\MenuManagerBundle\Menu\MenuItemInterface;
 use Wiredupdev\MenuManagerBundle\Menu\ProcessInterface;
 use Wiredupdev\MenuManagerBundle\Menu\Processor;
 use Wiredupdev\MenuManagerBundle\Menu\UriGeneratorInterface;
 
-#[CoversClass(Processor::class)]
-class ProcessorTest extends TestCase
+#[CoversClass(CachedProcessor::class)]
+class CachedProcessorTest extends TestCase
 {
-    private Processor $processor;
+    private ProcessInterface $processor;
 
     private UriGeneratorInterface $uriGenerator;
 
@@ -32,9 +35,9 @@ class ProcessorTest extends TestCase
             ->method('getTarget')
             ->willReturn('_self');
 
-        $this->processor = new Processor();
+        $processor = new Processor([]);
 
-        $this->processor->addProcess(process: new class implements ProcessInterface {
+        $processor->addProcess(process: new class implements ProcessInterface, Cacheable {
             public function process(MenuItemInterface $menuItem): void
             {
                 $menuItem->addAttribute('html', 'href', $menuItem->getUri());
@@ -49,9 +52,13 @@ class ProcessorTest extends TestCase
                 }
             }
         });
+
+        $cache = new ArrayAdapter();
+
+        $this->processor = new CachedProcessor($processor, $cache);
     }
 
-    public function testProcessing(): void
+    public function testCachedProcessing(): void
     {
         $item = Item::create('home', 'Home', $this->uriGenerator);
         $item->addAttribute('html', 'class', 'item');

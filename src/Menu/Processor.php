@@ -2,12 +2,10 @@
 
 namespace Wiredupdev\MenuManagerBundle\Menu;
 
-class Processor implements ProcessInterface
+class Processor implements ProcessorInterface
 {
-    private array $processes = [];
-
     public function __construct(
-        array $processes = [],
+        private array $processes = [],
     ) {
         foreach ($processes as $process) {
             $this->addProcess($process);
@@ -19,15 +17,27 @@ class Processor implements ProcessInterface
         $this->processes[$process::class] = $process;
     }
 
-    public function removeProcess(string $class): void
+    public function hasProcess(string $class): bool
     {
-        unset($this->processes[$class]);
+        return isset($this->processes[$class]);
     }
 
-    public function process(Item $item): void
+    public function removeProcess(string $class): void
     {
-        foreach ($this->processes as $process) {
-            $process->process($item);
+        if ($this->hasProcess($class)) {
+            unset($this->processes[$class]);
         }
+    }
+
+    public function process(MenuItemInterface $menuItem): void
+    {
+        foreach ($this as $process) {
+            $process->process($menuItem);
+        }
+    }
+
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->processes);
     }
 }

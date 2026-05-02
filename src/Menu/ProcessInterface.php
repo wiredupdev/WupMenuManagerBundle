@@ -4,5 +4,5 @@ namespace Wiredupdev\MenuManagerBundle\Menu;
 
 interface ProcessInterface
 {
-    public function process(Item $item);
+    public function process(MenuItemInterface $menuItem): void;
 }
