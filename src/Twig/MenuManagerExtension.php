@@ -9,13 +9,13 @@ use Twig\Error\SyntaxError;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Wiredupdev\MenuManagerBundle\Menu\Manager;
-use Wiredupdev\MenuManagerBundle\Menu\Processor;
+use Wiredupdev\MenuManagerBundle\Menu\ProcessorInterface;
 
 class MenuManagerExtension extends AbstractExtension
 {
     public function __construct(
         private Manager $menuManager,
-        private Processor $processor,
+        private ProcessorInterface $processor,
         private Environment $twig,
     ) {
     }
@@ -34,6 +34,9 @@ class MenuManagerExtension extends AbstractExtension
      */
     public function renderMenu(string $id, string $template = '@WudMenuManager/default.html.twig'): string
     {
-        return $this->twig->render($template, ['menu' => $this->menuManager->get($id), 'processor' => $this->processor]);
+        $menu = $this->menuManager->get($id);
+        $this->processor->process($menu);
+
+        return $this->twig->render($template, ['menu' => $menu]);
     }
 }

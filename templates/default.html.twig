@@ -1,12 +1,11 @@
-{% macro renderMenu(menu, processor) %}
+{% macro renderMenu(menu) %}
     {% import _self as self %}
     {% if menu.hasChildren %}
 <ul id="{{ menu.id }}">
     {% for item in menu %}
-        {{ processor.process(item) }}
         {% if item.isVisible %}
-            <li {% if item.hasAttribute('item_html_class') %}class="{{ item.getAttribute('item_html_class') | join(' ')  }}"{% endif %}>
-                <a {% if item.hasAttribute('item_link_html_attr')  %}{{ item.getAttribute('item_link_html_attr') | map((value, key) => '{key}="{value}"') | join(' ')  }}{% endif %}{% if item.uri %} href="{{ item.uri }}"{% endif %}{% if item.hasAttribute('item_link_html_class') %}class="{{ item.getAttribute('item_link_html_class') | join(' ')  }}"{% endif %}>{{ item.label }}</a>
+            <li>
+                <a href="{{ item.getUri() }}" target="{{ item.getTarget() }}" >{{ item.label }}</a>
                 {% if item.hasChildren %}
                     {{ self.renderMenu(item) }}
                 {% endif %}
@@ -18,4 +17,4 @@
 {% endmacro %}
 {% from _self import renderMenu %}
 
-{{ renderMenu(menu, processor) }}
+{{ renderMenu(menu) }}

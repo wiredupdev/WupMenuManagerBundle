@@ -26,6 +26,8 @@ class WudMenuManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTest
         /** @var Environment $twig */
         $twig = $container->get(Environment::class);
 
+        dd($container->has(MenuManagerExtension::class));
+
         $loader = new ChainLoader([
             new ArrayLoader([
                 'header.html.twig' => '{{ menu("main_menu_site") }}',
