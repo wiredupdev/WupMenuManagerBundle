@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Wiredupdev\MenuManagerBundle\Menu\Item;
 use Wiredupdev\MenuManagerBundle\Menu\Manager;
 use Wiredupdev\MenuManagerBundle\Menu\MenuFactory;
+use Wiredupdev\MenuManagerBundle\Menu\MenuItemInterface;
 use Wiredupdev\MenuManagerBundle\Menu\UriGeneratorInterface;
 
 #[CoversClass(Item::class)]
@@ -47,16 +48,10 @@ class ManagerTest extends TestCase
     {
         $this->menuManager->configure([
             'menu_classes' => [
-                new class($this->menuManager, $this->menuFactory) {
-                    public function __construct(
-                        private Manager $menuManager,
-                        private MenuFactory $menuFactory,
-                    ) {
-                    }
-                    public function __invoke(): void
+                new class {
+                    public function __invoke(): MenuItemInterface
                     {
-                        $this->menuFactory->create('');
-                        $this->menuManager->add(Item::create('dashboard', 'Dashboard'));
+                        return Item::create('dashboard', 'Dashboard');
                     }
                 },
             ],
