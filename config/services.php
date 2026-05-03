@@ -3,6 +3,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Cache\CacheInterface;
 use Wiredupdev\MenuManagerBundle\Menu;
 use Wiredupdev\MenuManagerBundle\Menu\UriGenerator\UriGeneratorFactory;
 use Wiredupdev\MenuManagerBundle\Twig;
@@ -26,6 +27,7 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(Menu\CachedProcessor::class)
         ->decorate('wud_menu_manager.processor')
+        ->arg('$cache', service(CacheInterface::class))
         ->arg('$processor', service('.inner'));
 
     $services->set(Menu\MenuFactory::class)

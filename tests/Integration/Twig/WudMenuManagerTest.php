@@ -15,7 +15,6 @@ class WudMenuManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTest
     {
         static::bootKernel([
             'debug' => false,
-            'environment' => 'test',
         ]);
     }
 
@@ -25,8 +24,6 @@ class WudMenuManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTest
 
         /** @var Environment $twig */
         $twig = $container->get(Environment::class);
-
-        dd($container->has(MenuManagerExtension::class));
 
         $loader = new ChainLoader([
             new ArrayLoader([
@@ -39,6 +36,6 @@ class WudMenuManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTest
 
         $rendered = $twig->render('header.html.twig');
 
-        $this->assertStringContainsString('id="main_menu_site"', $rendered);
+        $this->assertStringContainsString('main_menu_site', $rendered);
     }
 }

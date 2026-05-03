@@ -5,7 +5,7 @@
     {% for item in menu %}
         {% if item.isVisible %}
             <li>
-                <a href="{{ item.getUri() }}" target="{{ item.getTarget() }}" >{{ item.label }}</a>
+                <a href="{{ item.uri() }}" target="{{ item.uriTarget() }}" >{{ item.label }}</a>
                 {% if item.hasChildren %}
                     {{ self.renderMenu(item) }}
                 {% endif %}

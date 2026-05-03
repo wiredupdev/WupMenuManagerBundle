@@ -19,6 +19,7 @@ class MenuTest
                 [
                     'label' => 'Home',
                     'url' => 'https://www.example.com/home',
+                    'id' => 'home',
                 ],
             ],
         ]);
