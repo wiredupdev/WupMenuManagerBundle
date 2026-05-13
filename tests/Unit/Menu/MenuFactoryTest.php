@@ -36,7 +36,9 @@ class MenuFactoryTest extends TestCase
                 [
                     'id' => 'home',
                     'label' => 'Home',
-                    'route' => ['name' => 'app.home'],
+                    'uri' => [
+                        'route' => ['name' => 'app.home'],
+                    ],
                     'attributes' => [
                         'html' => ['class' => 'active'],
                     ],
@@ -44,7 +46,9 @@ class MenuFactoryTest extends TestCase
                 [
                     'id' => 'partner_product',
                     'label' => 'Partner product',
-                    'url' => 'https://www.example.com/product-partner',
+                    'uri' => [
+                        'link' => 'https://www.example.com/product-partner',
+                    ],
                 ],
             ],
         ]);

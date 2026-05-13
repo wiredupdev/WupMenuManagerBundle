@@ -18,7 +18,9 @@ class MenuTest
             'children' => [
                 [
                     'label' => 'Home',
-                    'url' => 'https://www.example.com/home',
+                    'uri' => [
+                        'link' => 'https://www.example.com/home',
+                    ],
                     'id' => 'home',
                 ],
             ],

@@ -4,7 +4,6 @@ namespace Wiredupdev\MenuManagerBundle\Menu;
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Wiredupdev\MenuManagerBundle\Menu\UriGenerator\GeneratorType;
 use Wiredupdev\MenuManagerBundle\Menu\UriGenerator\UriGeneratorFactory;
 
 readonly class MenuFactory
@@ -40,34 +39,17 @@ readonly class MenuFactory
             'id' => null,
             'label' => '',
             'uri' => null,
-            'url' => null,
-            'route' => [
-                'name' => null,
-                'parameters' => [],
-            ],
             'attributes' => [],
             'position' => 0,
             'children' => [],
         ]);
 
-        $resolver->addAllowedTypes('uri', ['null', UriGeneratorInterface::class]);
+        $resolver->addAllowedTypes('uri', ['null', 'array',  UriGeneratorInterface::class]);
         $resolver->setAllowedTypes('label', 'string');
-        $resolver->setAllowedTypes('route', ['null', 'array']);
-        $resolver->setAllowedTypes('url', ['string', 'null']);
         $resolver->setAllowedTypes('attributes', 'array');
         $resolver->setAllowedTypes('position', 'int');
 
-        $resolver->setOptions('route', function (Options $options) {
-            $options->setDefaults([
-                'name' => null,
-                'parameters' => [],
-            ]);
-            $options->setAllowedTypes('name', ['string', 'null']);
-            $options->setAllowedTypes('parameters', ['array']);
-        });
-
         $resolver->setNormalizer('attributes', function (Options $options, array $value): array {
-
             foreach ($value as $type => $fields) {
                 if (!\is_string($type)) {
                     throw new \InvalidArgumentException('The attributes key must be a string.');
@@ -99,19 +81,11 @@ readonly class MenuFactory
 
     private function uriGeneratorResolve(array $options): ?UriGeneratorInterface
     {
-        if ($options['url']) {
-            return $this->uriGeneratorFactory->create(GeneratorType::DIRECT_LINK_TYPE, $options['url']);
-        }
-
-        if ($options['route']['name']) {
-            return $this->uriGeneratorFactory->create(GeneratorType::ROUTE_LINK_TYPE, $options['route']['name'], $options['route']['parameters']);
-        }
-
         if ($options['uri'] instanceof UriGeneratorInterface) {
             return $options['uri'];
         }
 
-        return null;
+        return $this->uriGeneratorFactory->createFromOptions($options['uri'] ?? []);
     }
 
     private function configAttributes(MenuItemInterface $menuItem, array $options): void
