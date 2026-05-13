@@ -1,20 +1,3 @@
-{% macro renderMenu(menu) %}
-    {% import _self as self %}
-    {% if menu.hasChildren %}
-<ul id="{{ menu.id }}">
-    {% for item in menu %}
-        {% if item.isVisible %}
-            <li>
-                <a href="{{ item.uri() }}" target="{{ item.uriTarget() }}" >{{ item.label }}</a>
-                {% if item.hasChildren %}
-                    {{ self.renderMenu(item) }}
-                {% endif %}
-            </li>
-        {% endif %}
-    {% endfor %}
-</ul>
-{% endif %}
-{% endmacro %}
-{% from _self import renderMenu %}
+{% from '_macros.html.twig' import renderMenu %}
 
 {{ renderMenu(menu) }}
