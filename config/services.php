@@ -4,6 +4,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\CacheInterface;
+use Wiredupdev\MenuManagerBundle\Cache\MenuItemMarshaller;
 use Wiredupdev\MenuManagerBundle\Menu;
 use Wiredupdev\MenuManagerBundle\Menu\UriGenerator\UriGeneratorFactory;
 use Wiredupdev\MenuManagerBundle\Twig;
@@ -27,12 +28,15 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(Menu\CachedProcessor::class)
         ->decorate('wud_menu_manager.processor')
-        ->arg('$cache', service(CacheInterface::class))
+        ->arg('$cache', service('wud_menu_manager.cache_pool'))
         ->arg('$processor', service('.inner'));
 
     $services->set(Menu\MenuFactory::class)
         ->arg('$uriGeneratorFactory', service(UriGeneratorFactory::class))
         ->alias('wud_menu_factory', Menu\MenuFactory::class);
+
+    $services->set(MenuItemMarshaller::class)
+        ->tag('wud.menu_marshaller');
 
     $services
         ->alias('wud_menu_manager', Menu\Manager::class)

@@ -9,7 +9,7 @@ use Twig\Loader\ChainLoader;
 use Wiredupdev\MenuManagerBundle\Twig\MenuManagerExtension;
 
 #[CoversClass(MenuManagerExtension::class)]
-class WudMenuManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
+class MenuManagerExtensionTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
 {
     protected function setUp(): void
     {
