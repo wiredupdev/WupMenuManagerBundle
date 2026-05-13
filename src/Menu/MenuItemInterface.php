@@ -16,9 +16,13 @@ interface MenuItemInterface
 
     public function hasAttribute(string $type, string $name): bool;
 
+    public function getAttributes(): array;
+
     public function addChild(self $child): self;
 
     public function getChild(string $id): ?self;
+
+    public function getChildren(): array;
 
     public function removeChild(string $id): self;
 
@@ -26,7 +30,13 @@ interface MenuItemInterface
 
     public function getUri(): ?string;
 
+    public function getUriParams(): ?array;
+
+    public function getUriTarget(): ?string;
+
+    public function getUriType(): ?string;
+
+    public function getRawUri(): ?string;
+
     public function getPosition(): int;
-
-
 }

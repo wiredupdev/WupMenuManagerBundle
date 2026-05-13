@@ -95,6 +95,11 @@ class Item implements \IteratorAggregate, \Countable, MenuItemInterface
         return $this->attributes[$type][$name] ?? null;
     }
 
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
     public function setParent(?self $parent): self
     {
         $this->parent = $parent;
@@ -138,6 +143,11 @@ class Item implements \IteratorAggregate, \Countable, MenuItemInterface
         return $this;
     }
 
+    public function getChildren(): array
+    {
+        return $this->children;
+    }
+
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->children);
@@ -168,17 +178,32 @@ class Item implements \IteratorAggregate, \Countable, MenuItemInterface
         return $this;
     }
 
-    public function getUri(): ?string
+    public function getUri(): string
     {
         return $this->uri?->generate();
     }
 
-    public function getUriTarget(): string
+    public function getUriParams(): ?array
+    {
+        return $this->uri?->getParams();
+    }
+
+    public function getUriType(): ?string
+    {
+        return $this->uri?->getType();
+    }
+
+    public function getRawUri(): ?string
+    {
+        return $this->uri?->getRawUri();
+    }
+
+    public function getUriTarget(): ?string
     {
         return $this->uri?->getTarget();
     }
 
-    public function setUri(UriGeneratorInterface $uri): self
+    public function setUri(?UriGeneratorInterface $uri): self
     {
         $this->uri = $uri;
 
