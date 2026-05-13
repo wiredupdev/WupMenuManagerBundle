@@ -94,3 +94,4 @@ You can optionally set the template as second parameter.
 ````
     {{ menu('main_menu_site', 'some-template.html.twig') }}
 ````
+For  template override see @WudMenuManager\default.html.twig
