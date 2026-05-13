@@ -21,28 +21,43 @@ Class must implement __invoke method.
 use Wiredupdev\MenuManagerBundle\Menu\Item;
 use Wiredupdev\MenuManagerBundle\Menu\Manager;
 
-class Site
+class AppMenu
 {
-    //..
-    public function __invoke(Manager $menuManager): void
+    public function __construct(
+        private MenuFactory $menuFactory,
+    ) {
+    }
+
+    public function __invoke(): MenuItemInterface
     {
-        $menuManager->add(
-            Item::create('main_menu_site', 'main menu site')
-            ->addChild(
-                Item::create('main_menu_home', 'home', 'http://localhost/home')
-                ->addAttribute('item_html_class', 'main-menu-home')
-            )->addChild(
-                Item::create('main_menu_about_about_us', 'about us', 'http://localhost/aboutus')
-                ->addAttribute('item_html_class', 'main-menu-about-about-us')
-            )
-        );
+        return $this->menuFactory->create('main_menu_site', [
+            'children' => [
+                [
+                    'label' => 'Home',
+                    'uri' => [
+                        'link' => 'https://www.example.com/home',
+                    ],
+                    'id' => 'home',
+                ],
+                [
+                    'label' => 'About us',
+                    'uri' => [
+                       'route'=> [
+                            'name'=> 'app.aboutus',
+                            'parameters => [] // optional
+                       ]
+                    ],
+                    'id' => 'about_us',
+                ],
+            ],
+        ]);
     }
 ```
 ###  Config service
 Menu class must register with tag ``wud_menu_manager.menus``
 ```
 services:
-  App\Menu\Site:
+  App\Menu\AppMenu:
     tags:
       - { name: wud_menu_manager.menus }
 ```
@@ -58,7 +73,7 @@ services:
 ```
 ````
 //..
-use Wiredupdev\MenuManagerBundle\Menu\Item;
+use Wiredupdev\MenuManagerBundle\Menu\ProcessInterface;
 
 class ExampleProcess implements ProcessInterface
 {
@@ -69,7 +84,11 @@ class ExampleProcess implements ProcessInterface
          // change menu item data.
     }
 }
+
 ````
+### Cacheable Process
+You can implement \Wiredupdev\MenuManagerBundle\Menu\Cacheable for process that don't need to be executed everytime when menu is render. 
+
 ### Rendering menu
 You can optionally set the template as second parameter.
 ````
