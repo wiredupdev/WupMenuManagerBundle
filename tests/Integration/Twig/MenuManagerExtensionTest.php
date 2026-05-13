@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 use Twig\Loader\ChainLoader;
+use Twig\Loader\FilesystemLoader;
 use Wiredupdev\MenuManagerBundle\Twig\MenuManagerExtension;
 
 #[CoversClass(MenuManagerExtension::class)]
@@ -26,6 +27,7 @@ class MenuManagerExtensionTest extends \Symfony\Bundle\FrameworkBundle\Test\Kern
         $twig = $container->get(Environment::class);
 
         $loader = new ChainLoader([
+            new FilesystemLoader(__DIR__.'/../../../templates'),
             new ArrayLoader([
                 'header.html.twig' => '{{ menu("main_menu_site") }}',
             ]),
