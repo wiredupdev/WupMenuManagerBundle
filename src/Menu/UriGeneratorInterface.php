@@ -11,4 +11,8 @@ interface UriGeneratorInterface
     public function getParams(): array;
 
     public function getTarget(): string;
+
+    public function getType(): string;
+
+    public function getRawUri(): string;
 }

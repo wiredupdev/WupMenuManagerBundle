@@ -36,4 +36,14 @@ readonly class RouteLinkGenerator implements UriGeneratorInterface
     {
         return $this->target;
     }
+
+    public function getType(): string
+    {
+        return GeneratorType::ROUTE_LINK_TYPE->value;
+    }
+
+    public function getRawUri(): string
+    {
+        return $this->name;
+    }
 }

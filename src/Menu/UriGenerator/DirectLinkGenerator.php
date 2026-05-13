@@ -33,4 +33,14 @@ readonly class DirectLinkGenerator implements UriGeneratorInterface
     {
         return $this->target;
     }
+
+    public function getType(): string
+    {
+        return GeneratorType::DIRECT_LINK_TYPE->value;
+    }
+
+    public function getRawUri(): string
+    {
+        return $this->uri;
+    }
 }
