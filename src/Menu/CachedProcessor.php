@@ -2,6 +2,7 @@
 
 namespace Wiredupdev\MenuManagerBundle\Menu;
 
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -13,9 +14,11 @@ readonly class CachedProcessor implements ProcessorInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function process(MenuItemInterface $menuItem): void
     {
-
         $itemKey = \sprintf('#menu_%s', $menuItem->getId());
 
         $menuItem = $this->cache->get($itemKey, function (ItemInterface $item) use ($menuItem): MenuItemInterface {
