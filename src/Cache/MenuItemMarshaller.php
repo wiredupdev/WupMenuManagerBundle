@@ -15,6 +15,7 @@ class MenuItemMarshaller implements MarshallerInterface
     public function marshall(array $values, ?array &$failed): array
     {
         $serializedValues = [];
+        $failed = [];
         foreach ($values as $key => $value) {
             if ($value instanceof MenuItemInterface) {
                 $serializedValues[$key] = serialize([

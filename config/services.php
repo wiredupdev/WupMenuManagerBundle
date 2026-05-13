@@ -2,8 +2,8 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Cache\CacheInterface;
 use Wiredupdev\MenuManagerBundle\Cache\MenuItemMarshaller;
 use Wiredupdev\MenuManagerBundle\Menu;
 use Wiredupdev\MenuManagerBundle\Menu\UriGenerator\UriGeneratorFactory;
@@ -11,6 +11,13 @@ use Wiredupdev\MenuManagerBundle\Twig;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
+
+    $services->set('wud_menu_manager.cache_pool', FilesystemAdapter::class)
+        ->args(['wud_menu_manager', 0, '%kernel.cache_dir%/wud_menu_manager',  service(MenuItemMarshaller::class)])
+        ->tag('cache.pool', [
+            'clearer' => 'cache.default_clearer',
+            'pruneable' => 'cache.default_pruner',
+        ]);
 
     $services->set(UriGeneratorFactory::class)
         ->arg('$uriGenerator', service('router'))
@@ -36,6 +43,7 @@ return static function (ContainerConfigurator $container): void {
         ->alias('wud_menu_factory', Menu\MenuFactory::class);
 
     $services->set(MenuItemMarshaller::class)
+        ->arg('$menuFactory', service(Menu\MenuFactory::class))
         ->tag('wud.menu_marshaller');
 
     $services
