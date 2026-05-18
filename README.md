@@ -69,7 +69,7 @@ To register custom processes you need to add tag ``wud_menu_manager.processor`` 
 services:
   App\Menu\Processor\ExampleProcess:
     tags:
-      - { name: wud_menu_manager.menus }
+      - { name: wud_menu_manager.processor }
 ```
 ````
 //..
