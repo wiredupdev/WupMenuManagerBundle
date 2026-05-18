@@ -4,6 +4,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Wiredupdev\MenuManagerBundle\Cache\MenuItemMarshaller;
 use Wiredupdev\MenuManagerBundle\Menu;
 use Wiredupdev\MenuManagerBundle\Menu\UriGenerator\UriGeneratorFactory;
@@ -13,7 +14,7 @@ return static function (ContainerConfigurator $container): void {
     $services = $container->services();
 
     $services->set('wud_menu_manager.cache_pool', FilesystemAdapter::class)
-        ->args(['wud_menu_manager', 0, '%kernel.cache_dir%/wud_menu_manager',  service(MenuItemMarshaller::class)])
+        ->args(['wud_menu_manager', 0, '%kernel.cache_dir%/wud_menu_manager', service(MenuItemMarshaller::class)])
         ->tag('cache.pool', [
             'clearer' => 'cache.default_clearer',
             'pruneable' => 'cache.default_pruner',
@@ -45,6 +46,10 @@ return static function (ContainerConfigurator $container): void {
     $services->set(MenuItemMarshaller::class)
         ->arg('$menuFactory', service(Menu\MenuFactory::class))
         ->tag('wud.menu_marshaller');
+
+    $services->set(Menu\Process\SecurityProcess::class)
+        ->arg('$authorizationChecker', service(AuthorizationCheckerInterface::class))
+        ->tag('wud_menu_manager.processor');
 
     $services
         ->alias('wud_menu_manager', Menu\Manager::class)
