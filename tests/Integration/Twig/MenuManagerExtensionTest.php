@@ -7,7 +7,6 @@ use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
-use Wiredupdev\MenuManagerBundle\Menu\Processor;
 use Wiredupdev\MenuManagerBundle\Twig\MenuManagerExtension;
 
 #[CoversClass(MenuManagerExtension::class)]
