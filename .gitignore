@@ -2,6 +2,7 @@
 /vendor/
 composer.lock
 phpunit.xml
+php-cs-fixer.phar
 .phpunit.cache
 .php-cs-fixer.cache
 /tests/var/
