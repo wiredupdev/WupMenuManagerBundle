@@ -31,6 +31,13 @@ class AppMenu
     public function __invoke(): MenuItemInterface
     {
         return $this->menuFactory->create('main_menu_site', [
+            'attributes'=> [
+                'security'=> [
+                    'roles'=> [
+                        'ROLE_USER',
+                    ]
+                ]
+            ],
             'children' => [
                 [
                     'label' => 'Home',
