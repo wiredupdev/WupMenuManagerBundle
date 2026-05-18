@@ -49,7 +49,7 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(Menu\Process\SecurityProcess::class)
         ->arg('$authorizationChecker', service(AuthorizationCheckerInterface::class))
-        ->tag('wud_menu_manager.processor');
+        ->tag('wud_menu_manager.processes');
 
     $services
         ->alias('wud_menu_manager', Menu\Manager::class)

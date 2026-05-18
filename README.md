@@ -63,13 +63,13 @@ services:
 ```
 ###  Menu item processor
 Processor component run individual process when iterates through menu items.
-To register custom processes you need to add tag ``wud_menu_manager.processor`` to your service and implement
+To register custom processes you need to add tag ``wud_menu_manager.processes`` to your service and implement
 ``Wiredupdev\MenuManagerBundle\Menu\Processor\ProcessInterface``.
 ```
 services:
   App\Menu\Processor\ExampleProcess:
     tags:
-      - { name: wud_menu_manager.processor }
+      - { name: wud_menu_manager.processes }
 ```
 ````
 //..
