@@ -102,6 +102,7 @@ readonly class MenuFactory
         foreach ($children as $child) {
             $item = Item::create($child['id'], $child['label'], $this->uriGeneratorResolve($child));
             $this->configAttributes($item, $child);
+            $this->configChildren($child['children'] ?? [], $item);
             $menu->addChild($item);
         }
     }

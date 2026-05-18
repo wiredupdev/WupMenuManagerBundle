@@ -8,6 +8,10 @@ interface MenuItemInterface
 
     public function isVisible(): bool;
 
+    public function show(): self;
+
+    public function hide(): self;
+
     public function addAttribute(string $type, string $name, mixed $value): self;
 
     public function getAttribute(string $type, string $name): mixed;
