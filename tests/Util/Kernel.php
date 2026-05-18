@@ -3,6 +3,7 @@
 namespace Wiredupdev\MenuManagerBundle\Tests\Util;
 
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -17,6 +18,7 @@ class Kernel extends \Symfony\Component\HttpKernel\Kernel
     {
         return [
             new FrameworkBundle(),
+            new SecurityBundle(),
             new TwigBundle(),
             new WudMenuManagerBundle(),
         ];
@@ -36,9 +38,20 @@ class Kernel extends \Symfony\Component\HttpKernel\Kernel
                 'test' => true,
             ]);
 
+            $container->loadFromExtension('security', [
+                'firewalls' => [
+                    'main' => [
+                        'http_basic' => true,
+                    ],
+                ],
+                'access_control' => [
+                    ['path' => '^/', 'roles' => ['ROLE_USER']],
+                ],
+            ]);
+
             $loader = new YamlFileLoader(
                 $container,
-                new FileLocator(__DIR__.'/../Resource/Config')
+                new FileLocator(__DIR__ . '/../Resource/Config')
             );
 
             $loader->load('services.yaml');
